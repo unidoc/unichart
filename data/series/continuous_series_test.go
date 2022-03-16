@@ -46,8 +46,6 @@ func TestContinuousSeriesValueFormatter(t *testing.T) {
 }
 
 func TestContinuousSeriesValidate(t *testing.T) {
-	// replaced new assertions helper
-
 	cs := ContinuousSeries{
 		Name:    "Test Series",
 		XValues: sequence.LinearRange(1.0, 10.0),

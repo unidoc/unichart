@@ -8,8 +8,6 @@ import (
 )
 
 func TestPercentageDifferenceSeries(t *testing.T) {
-	// replaced new assertions helper
-
 	cs := ContinuousSeries{
 		XValues: sequence.LinearRange(1.0, 10.0),
 		YValues: sequence.LinearRange(1.0, 10.0),

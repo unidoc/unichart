@@ -28,8 +28,6 @@ func TestLinearRegressionSeries(t *testing.T) {
 }
 
 func TestLinearRegressionSeriesDesc(t *testing.T) {
-	// replaced new assertions helper
-
 	mainSeries := ContinuousSeries{
 		Name:    "A test series",
 		XValues: sequence.LinearRange(100.0, 1.0),
