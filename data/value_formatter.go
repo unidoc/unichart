@@ -7,20 +7,20 @@ import (
 )
 
 const (
-	// DefaultDateFormat is the default date format.
-	DefaultDateFormat = "2006-01-02"
+	// defaultDateFormat is the default date format.
+	defaultDateFormat = "2006-01-02"
 
-	// DefaultDateHourFormat is the date format for hour timestamp formats.
-	DefaultDateHourFormat = "01-02 3PM"
+	// defaultDateHourFormat is the date format for hour timestamp formats.
+	defaultDateHourFormat = "01-02 3PM"
 
-	// DefaultDateMinuteFormat is the date format for minute range timestamp formats.
-	DefaultDateMinuteFormat = "01-02 3:04PM"
+	// defaultDateMinuteFormat is the date format for minute range timestamp formats.
+	defaultDateMinuteFormat = "01-02 3:04PM"
 
-	// DefaultFloatFormat is the default float format.
-	DefaultFloatFormat = "%.2f"
+	// defaultFloatFormat is the default float format.
+	defaultFloatFormat = "%.2f"
 
-	// DefaultPercentValueFormat is the default percent format.
-	DefaultPercentValueFormat = "%0.2f%%"
+	// defaultPercentValueFormat is the default percent format.
+	defaultPercentValueFormat = "%0.2f%%"
 )
 
 // ValueFormatterProvider is a series that has custom formatters.
@@ -33,17 +33,17 @@ type ValueFormatter func(v interface{}) string
 
 // TimeValueFormatter is a ValueFormatter for timestamps.
 func TimeValueFormatter(v interface{}) string {
-	return formatTime(v, DefaultDateFormat)
+	return formatTime(v, defaultDateFormat)
 }
 
 // TimeHourValueFormatter is a ValueFormatter for timestamps.
 func TimeHourValueFormatter(v interface{}) string {
-	return formatTime(v, DefaultDateHourFormat)
+	return formatTime(v, defaultDateHourFormat)
 }
 
 // TimeMinuteValueFormatter is a ValueFormatter for timestamps.
 func TimeMinuteValueFormatter(v interface{}) string {
-	return formatTime(v, DefaultDateMinuteFormat)
+	return formatTime(v, defaultDateMinuteFormat)
 }
 
 // TimeDateValueFormatter is a ValueFormatter for timestamps.
@@ -90,14 +90,14 @@ func IntValueFormatter(v interface{}) string {
 
 // FloatValueFormatter is a ValueFormatter for float64.
 func FloatValueFormatter(v interface{}) string {
-	return FloatValueFormatterWithFormat(v, DefaultFloatFormat)
+	return FloatValueFormatterWithFormat(v, defaultFloatFormat)
 }
 
 // PercentValueFormatter is a formatter for percent values.
 // NOTE: it normalizes the values, i.e. multiplies by 100.0.
 func PercentValueFormatter(v interface{}) string {
 	if typed, isTyped := v.(float64); isTyped {
-		return FloatValueFormatterWithFormat(typed*100.0, DefaultPercentValueFormat)
+		return FloatValueFormatterWithFormat(typed*100.0, defaultPercentValueFormat)
 	}
 	return ""
 }

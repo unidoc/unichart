@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	// DefaultEMAPeriod is the default EMA period used in the sigma calculation.
-	DefaultEMAPeriod = 12
+	// defaultEMAPeriod is the default EMA period used in the sigma calculation.
+	defaultEMAPeriod = 12
 )
 
 // Interface Assertions.
@@ -49,7 +49,7 @@ func (ema EMASeries) GetYAxis() YAxisType {
 // GetPeriod returns the window size.
 func (ema EMASeries) GetPeriod() int {
 	if ema.Period == 0 {
-		return DefaultEMAPeriod
+		return defaultEMAPeriod
 	}
 	return ema.Period
 }

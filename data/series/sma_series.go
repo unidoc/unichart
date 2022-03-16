@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	// DefaultSimpleMovingAveragePeriod is the default number of values to average.
-	DefaultSimpleMovingAveragePeriod = 16
+	// defaultSimpleMovingAveragePeriod is the default number of
+	// values to average.
+	defaultSimpleMovingAveragePeriod = 16
 )
 
 // Interface Assertions.
@@ -56,7 +57,7 @@ func (sma SMASeries) GetPeriod(defaults ...int) int {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
-		return DefaultSimpleMovingAveragePeriod
+		return defaultSimpleMovingAveragePeriod
 	}
 	return sma.Period
 }

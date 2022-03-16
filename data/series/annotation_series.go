@@ -10,24 +10,24 @@ import (
 )
 
 const (
-	// DefaultAnnotationDeltaWidth is the width of the left triangle out of annotations.
-	DefaultAnnotationDeltaWidth = 10
+	// defaultAnnotationDeltaWidth is the width of the left triangle out of annotations.
+	defaultAnnotationDeltaWidth = 10
 
-	// DefaultAnnotationFontSize is the font size of annotations.
-	DefaultAnnotationFontSize = 10.0
+	// defaultAnnotationFontSize is the font size of annotations.
+	defaultAnnotationFontSize = 10.0
 )
 
 var (
-	// DefaultAnnotationPadding is the padding around an annotation.
-	DefaultAnnotationPadding = render.Box{
+	// defaultAnnotationPadding is the padding around an annotation.
+	defaultAnnotationPadding = render.Box{
 		Top:    5,
 		Left:   5,
 		Right:  5,
 		Bottom: 5,
 	}
 
-	// DefaultAnnotationFillColor is the default annotation background color.
-	DefaultAnnotationFillColor = render.ColorWhite
+	// defaultAnnotationFillColor is the default annotation background color.
+	defaultAnnotationFillColor = render.ColorWhite
 )
 
 // Interface Assertions.
@@ -163,11 +163,11 @@ func (as AnnotationSeries) annotationStyleDefaults(defaults render.Style) render
 	return render.Style{
 		FontColor:   render.DefaultTextColor,
 		Font:        defaults.Font,
-		FillColor:   DefaultAnnotationFillColor,
-		FontSize:    DefaultAnnotationFontSize,
+		FillColor:   defaultAnnotationFillColor,
+		FontSize:    defaultAnnotationFontSize,
 		StrokeColor: defaults.StrokeColor,
 		StrokeWidth: defaults.StrokeWidth,
-		Padding:     DefaultAnnotationPadding,
+		Padding:     defaultAnnotationPadding,
 	}
 }
 
@@ -226,15 +226,15 @@ func measureAnnotation(r render.Renderer, canvasBox render.Box, style render.Sty
 	textHeight := textBox.Height()
 	halfTextHeight := textHeight >> 1
 
-	pt := style.Padding.GetTop(DefaultAnnotationPadding.Top)
-	pl := style.Padding.GetLeft(DefaultAnnotationPadding.Left)
-	pr := style.Padding.GetRight(DefaultAnnotationPadding.Right)
-	pb := style.Padding.GetBottom(DefaultAnnotationPadding.Bottom)
+	pt := style.Padding.GetTop(defaultAnnotationPadding.Top)
+	pl := style.Padding.GetLeft(defaultAnnotationPadding.Left)
+	pr := style.Padding.GetRight(defaultAnnotationPadding.Right)
+	pb := style.Padding.GetBottom(defaultAnnotationPadding.Bottom)
 
 	strokeWidth := style.GetStrokeWidth()
 
 	top := ly - (pt + halfTextHeight)
-	right := lx + pl + pr + textWidth + DefaultAnnotationDeltaWidth + int(strokeWidth)
+	right := lx + pl + pr + textWidth + defaultAnnotationDeltaWidth + int(strokeWidth)
 	bottom := ly + (pb + halfTextHeight)
 
 	return render.Box{
@@ -256,24 +256,24 @@ func drawAnnotation(r render.Renderer, canvasBox render.Box, style render.Style,
 
 	style.GetFillAndStrokeOptions().WriteToRenderer(r)
 
-	pt := style.Padding.GetTop(DefaultAnnotationPadding.Top)
-	pl := style.Padding.GetLeft(DefaultAnnotationPadding.Left)
-	pr := style.Padding.GetRight(DefaultAnnotationPadding.Right)
-	pb := style.Padding.GetBottom(DefaultAnnotationPadding.Bottom)
+	pt := style.Padding.GetTop(defaultAnnotationPadding.Top)
+	pl := style.Padding.GetLeft(defaultAnnotationPadding.Left)
+	pr := style.Padding.GetRight(defaultAnnotationPadding.Right)
+	pb := style.Padding.GetBottom(defaultAnnotationPadding.Bottom)
 
-	textX := lx + pl + DefaultAnnotationDeltaWidth
+	textX := lx + pl + defaultAnnotationDeltaWidth
 	textY := ly + halfTextHeight
 
-	ltx := lx + DefaultAnnotationDeltaWidth
+	ltx := lx + defaultAnnotationDeltaWidth
 	lty := ly - (pt + halfTextHeight)
 
-	rtx := lx + pl + pr + textWidth + DefaultAnnotationDeltaWidth
+	rtx := lx + pl + pr + textWidth + defaultAnnotationDeltaWidth
 	rty := ly - (pt + halfTextHeight)
 
-	rbx := lx + pl + pr + textWidth + DefaultAnnotationDeltaWidth
+	rbx := lx + pl + pr + textWidth + defaultAnnotationDeltaWidth
 	rby := ly + (pb + halfTextHeight)
 
-	lbx := lx + DefaultAnnotationDeltaWidth
+	lbx := lx + defaultAnnotationDeltaWidth
 	lby := ly + (pb + halfTextHeight)
 
 	r.MoveTo(lx, ly)
