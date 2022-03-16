@@ -16,7 +16,7 @@ func TestPoly(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, 3, len(c))
 
-	require.InDelta(t, c[0], 0.999999999, DefaultEpsilon)
-	require.InDelta(t, c[1], 2, DefaultEpsilon)
-	require.InDelta(t, c[2], 3, DefaultEpsilon)
+	require.InDelta(t, c[0], 0.999999999, defaultEpsilon)
+	require.InDelta(t, c[1], 2, defaultEpsilon)
+	require.InDelta(t, c[2], 3, defaultEpsilon)
 }

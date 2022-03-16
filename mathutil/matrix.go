@@ -9,16 +9,16 @@ import (
 )
 
 const (
-	// DefaultEpsilon represents the minimum precision for matrix math operations.
-	DefaultEpsilon = 0.000001
+	// defaultEpsilon is the minimum precision for matrix math operations.
+	defaultEpsilon = 0.000001
 )
 
 var (
-	// ErrDimensionMismatch is a typical error.
-	ErrDimensionMismatch = errors.New("dimension mismatch")
+	// errDimensionMismatch is a typical error.
+	errDimensionMismatch = errors.New("dimension mismatch")
 
-	// ErrSingularValue is a typical error.
-	ErrSingularValue = errors.New("singular value")
+	// errSingularValue is a typical error.
+	errSingularValue = errors.New("singular value")
 )
 
 // NewMatrix returns a new matrix.
@@ -26,7 +26,7 @@ func NewMatrix(rows, cols int, values ...float64) *Matrix {
 	if len(values) == 0 {
 		return &Matrix{
 			stride:   cols,
-			epsilon:  DefaultEpsilon,
+			epsilon:  defaultEpsilon,
 			elements: make([]float64, rows*cols),
 		}
 	}
@@ -34,7 +34,7 @@ func NewMatrix(rows, cols int, values ...float64) *Matrix {
 	copy(elems, values)
 	return &Matrix{
 		stride:   cols,
-		epsilon:  DefaultEpsilon,
+		epsilon:  defaultEpsilon,
 		elements: elems,
 	}
 }
@@ -62,7 +62,7 @@ func OnesMatrix(rows, cols int) *Matrix {
 
 	return &Matrix{
 		stride:   cols,
-		epsilon:  DefaultEpsilon,
+		epsilon:  defaultEpsilon,
 		elements: ones,
 	}
 }
@@ -268,7 +268,7 @@ func (m *Matrix) Augment(m2 *Matrix) (*Matrix, error) {
 	mr, mc := m.Size()
 	m2r, m2c := m2.Size()
 	if mr != m2r {
-		return nil, ErrDimensionMismatch
+		return nil, errDimensionMismatch
 	}
 
 	m3 := ZeroMatrix(mr, mc+m2c)
@@ -369,7 +369,7 @@ func (m *Matrix) U() *Matrix {
 // Multiply multiplies two matrices.
 func (m *Matrix) Multiply(m2 *Matrix) (m3 *Matrix, err error) {
 	if m.stride*m2.stride != len(m2.elements) {
-		return nil, ErrDimensionMismatch
+		return nil, errDimensionMismatch
 	}
 
 	m3 = &Matrix{epsilon: m.epsilon, stride: m2.stride, elements: make([]float64, (len(m.elements)/m.stride)*m2.stride)}
@@ -422,7 +422,6 @@ func (m *Matrix) Times(m2 *Matrix) (*Matrix, error) {
 
 	if mc != m2r {
 		return nil, fmt.Errorf("cannot multiply (%dx%d) and (%dx%d)", mr, mc, m2r, m2c)
-		//return nil, ErrDimensionMismatch
 	}
 
 	c := ZeroMatrix(mr, m2c)
@@ -558,7 +557,7 @@ func (m *Matrix) Transpose() *Matrix {
 // Inverse returns a matrix such that M*I==1.
 func (m *Matrix) Inverse() (*Matrix, error) {
 	if !m.IsSymmetric() {
-		return nil, ErrDimensionMismatch
+		return nil, errDimensionMismatch
 	}
 
 	rows, cols := m.Size()
@@ -575,7 +574,7 @@ func (m *Matrix) Inverse() (*Matrix, error) {
 			aug.SwapRows(i, j)
 		}
 		if aug.Get(i, i) == 0 {
-			return nil, ErrSingularValue
+			return nil, errSingularValue
 		}
 		aug.ScaleRow(i, 1.0/aug.Get(i, i))
 		for k := 0; k < rows; k++ {
