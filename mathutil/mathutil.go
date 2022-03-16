@@ -50,6 +50,26 @@ func MaxInt(values ...int) int {
 	return max
 }
 
+// MinMax returns the minimum and maximum of a given set of values.
+func MinMax(values ...float64) (min, max float64) {
+	if len(values) == 0 {
+		return
+	}
+
+	min, max = values[0], values[0]
+	for index := 1; index < len(values); index++ {
+		value := values[index]
+		if value < min {
+			min = value
+		}
+		if value > max {
+			max = value
+		}
+	}
+
+	return
+}
+
 // DegreesToRadians returns degrees as radians.
 func DegreesToRadians(degrees float64) float64 {
 	return degrees * _d2r

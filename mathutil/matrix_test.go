@@ -7,8 +7,6 @@ import (
 )
 
 func TestNewMatrix(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrix(10, 5)
 	rows, cols := m.Size()
 	require.Equal(t, 10, rows)
@@ -18,8 +16,6 @@ func TestNewMatrix(t *testing.T) {
 }
 
 func TestNewMatrixWithValues(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrix(5, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 	rows, cols := m.Size()
 	require.Equal(t, 5, rows)
@@ -29,8 +25,6 @@ func TestNewMatrixWithValues(t *testing.T) {
 }
 
 func TestIdentitiyMatrix(t *testing.T) {
-	// replaced new assertions helper
-
 	id := IdentityMatrix(5)
 	rows, cols := id.Size()
 	require.Equal(t, 5, rows)
@@ -47,8 +41,6 @@ func TestIdentitiyMatrix(t *testing.T) {
 }
 
 func TestNewMatrixFromArrays(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3, 4},
 		{5, 6, 7, 8},
@@ -61,8 +53,6 @@ func TestNewMatrixFromArrays(t *testing.T) {
 }
 
 func TestOnes(t *testing.T) {
-	// replaced new assertions helper
-
 	ones := OnesMatrix(5, 10)
 	rows, cols := ones.Size()
 	require.Equal(t, 5, rows)
@@ -76,16 +66,12 @@ func TestOnes(t *testing.T) {
 }
 
 func TestMatrixEpsilon(t *testing.T) {
-	// replaced new assertions helper
-
 	ones := OnesMatrix(2, 2)
 	ones = ones.WithEpsilon(0.001)
 	require.Equal(t, 0.001, ones.Epsilon())
 }
 
 func TestMatrixArrays(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -102,8 +88,6 @@ func TestMatrixArrays(t *testing.T) {
 }
 
 func TestMatrixIsSquare(t *testing.T) {
-	// replaced new assertions helper
-
 	require.False(t, NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -122,8 +106,6 @@ func TestMatrixIsSquare(t *testing.T) {
 }
 
 func TestMatrixIsSymmetric(t *testing.T) {
-	// replaced new assertions helper
-
 	require.False(t, NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{2, 1, 2},
@@ -144,8 +126,6 @@ func TestMatrixIsSymmetric(t *testing.T) {
 }
 
 func TestMatrixGet(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -164,8 +144,6 @@ func TestMatrixGet(t *testing.T) {
 }
 
 func TestMatrixSet(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -177,8 +155,6 @@ func TestMatrixSet(t *testing.T) {
 }
 
 func TestMatrixCol(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -191,8 +167,6 @@ func TestMatrixCol(t *testing.T) {
 }
 
 func TestMatrixRow(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -205,8 +179,6 @@ func TestMatrixRow(t *testing.T) {
 }
 
 func TestMatrixSwapRows(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -221,8 +193,6 @@ func TestMatrixSwapRows(t *testing.T) {
 }
 
 func TestMatrixCopy(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -235,8 +205,6 @@ func TestMatrixCopy(t *testing.T) {
 }
 
 func TestMatrixDiagonalVector(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 4, 7},
 		{4, 2, 8},
@@ -248,8 +216,6 @@ func TestMatrixDiagonalVector(t *testing.T) {
 }
 
 func TestMatrixDiagonalVectorLandscape(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 4, 7, 99},
 		{4, 2, 8, 99},
@@ -260,8 +226,6 @@ func TestMatrixDiagonalVectorLandscape(t *testing.T) {
 }
 
 func TestMatrixDiagonalVectorPortrait(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 4},
 		{4, 2},
@@ -273,8 +237,6 @@ func TestMatrixDiagonalVectorPortrait(t *testing.T) {
 }
 
 func TestMatrixDiagonal(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 4, 7},
 		{4, 2, 8},
@@ -291,8 +253,6 @@ func TestMatrixDiagonal(t *testing.T) {
 }
 
 func TestMatrixEquals(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 4, 7},
 		{4, 2, 8},
@@ -308,8 +268,6 @@ func TestMatrixEquals(t *testing.T) {
 }
 
 func TestMatrixL(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -321,8 +279,6 @@ func TestMatrixL(t *testing.T) {
 }
 
 func TestMatrixU(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -334,8 +290,6 @@ func TestMatrixU(t *testing.T) {
 }
 
 func TestMatrixString(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
@@ -346,8 +300,6 @@ func TestMatrixString(t *testing.T) {
 }
 
 func TestMatrixLU(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 3, 5},
 		{2, 4, 7},
@@ -361,8 +313,6 @@ func TestMatrixLU(t *testing.T) {
 }
 
 func TestMatrixQR(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{12, -51, 4},
 		{6, 167, -68},
@@ -375,8 +325,6 @@ func TestMatrixQR(t *testing.T) {
 }
 
 func TestMatrixTranspose(t *testing.T) {
-	// replaced new assertions helper
-
 	m := NewMatrixFromArrays([][]float64{
 		{1, 2, 3},
 		{4, 5, 6},
