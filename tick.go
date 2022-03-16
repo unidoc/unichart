@@ -1,9 +1,7 @@
 package chart
 
 import (
-	"fmt"
 	"math"
-	"strings"
 
 	"github.com/unidoc/unichart/data"
 	"github.com/unidoc/unichart/mathutil"
@@ -35,35 +33,8 @@ type Tick struct {
 	Label string
 }
 
-// Ticks is an array of ticks.
-type Ticks []Tick
-
-// Len returns the length of the ticks set.
-func (t Ticks) Len() int {
-	return len(t)
-}
-
-// Swap swaps two elements.
-func (t Ticks) Swap(i, j int) {
-	t[i], t[j] = t[j], t[i]
-}
-
-// Less returns if i's value is less than j's value.
-func (t Ticks) Less(i, j int) bool {
-	return t[i].Value < t[j].Value
-}
-
-// String returns a string representation of the set of ticks.
-func (t Ticks) String() string {
-	var values []string
-	for i, tick := range t {
-		values = append(values, fmt.Sprintf("[%d: %s]", i, tick.Label))
-	}
-	return strings.Join(values, ", ")
-}
-
-// GenerateContinuousTicks generates a set of ticks.
-func GenerateContinuousTicks(r render.Renderer, ra data.Range, isVertical bool, style render.Style, vf data.ValueFormatter) []Tick {
+// generateContinuousTicks generates a set of ticks.
+func generateContinuousTicks(r render.Renderer, ra data.Range, isVertical bool, style render.Style, vf data.ValueFormatter) []Tick {
 	if vf == nil {
 		vf = data.FloatValueFormatter
 	}
@@ -89,9 +60,9 @@ func GenerateContinuousTicks(r render.Renderer, ra data.Range, isVertical bool, 
 
 	var tickSize float64
 	if isVertical {
-		tickSize = float64(labelBox.Height() + DefaultMinimumTickVerticalSpacing)
+		tickSize = float64(labelBox.Height() + defaultMinimumTickVerticalSpacing)
 	} else {
-		tickSize = float64(labelBox.Width() + DefaultMinimumTickHorizontalSpacing)
+		tickSize = float64(labelBox.Width() + defaultMinimumTickHorizontalSpacing)
 	}
 
 	domain := float64(ra.GetDomain())
@@ -102,7 +73,7 @@ func GenerateContinuousTicks(r render.Renderer, ra data.Range, isVertical bool, 
 	tickStep := rangeDelta / float64(intermediateTickCount)
 
 	roundTo := mathutil.RoundTo(rangeDelta) / 10
-	intermediateTickCount = mathutil.MinInt(intermediateTickCount, DefaultTickCountSanityCheck)
+	intermediateTickCount = mathutil.MinInt(intermediateTickCount, defaultTickCountSanityCheck)
 
 	for x := 1; x < intermediateTickCount; x++ {
 		var tickValue float64

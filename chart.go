@@ -41,7 +41,7 @@ func (c Chart) GetDPI(defaults ...float64) float64 {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
-		return DefaultDPI
+		return defaultDPI
 	}
 	return c.DPI
 }
@@ -54,7 +54,7 @@ func (c Chart) GetFont() render.Font {
 // GetWidth returns the chart width or the default value.
 func (c Chart) GetWidth() int {
 	if c.Width == 0 {
-		return DefaultChartWidth
+		return defaultChartWidth
 	}
 	return c.Width
 }
@@ -62,7 +62,7 @@ func (c Chart) GetWidth() int {
 // GetHeight returns the chart height or the default value.
 func (c Chart) GetHeight() int {
 	if c.Height == 0 {
-		return DefaultChartHeight
+		return defaultChartHeight
 	}
 	return c.Height
 }
@@ -82,7 +82,7 @@ func (c Chart) Render(rp render.RendererProvider, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	r.SetDPI(c.GetDPI(DefaultDPI))
+	r.SetDPI(c.GetDPI(defaultDPI))
 
 	c.drawBackground(r)
 
@@ -473,7 +473,7 @@ func (c Chart) drawTitle(r render.Renderer) {
 	if len(c.Title) > 0 && !c.TitleStyle.Hidden {
 		r.SetFont(c.TitleStyle.GetFont(c.GetFont()))
 		r.SetFontColor(c.TitleStyle.GetFontColor(c.GetColorPalette().TextColor()))
-		titleFontSize := c.TitleStyle.GetFontSize(DefaultTitleFontSize)
+		titleFontSize := c.TitleStyle.GetFontSize(defaultTitleFontSize)
 		r.SetFontSize(titleFontSize)
 
 		textBox := r.MeasureText(c.Title)
@@ -482,7 +482,7 @@ func (c Chart) drawTitle(r render.Renderer) {
 		textHeight := textBox.Height()
 
 		titleX := (c.GetWidth() >> 1) - (textWidth >> 1)
-		titleY := c.TitleStyle.Padding.GetTop(DefaultTitleTop) + textHeight
+		titleY := c.TitleStyle.Padding.GetTop(defaultTitleTop) + textHeight
 
 		r.Text(c.Title, titleX, titleY)
 	}
@@ -492,7 +492,7 @@ func (c Chart) styleDefaultsBackground() render.Style {
 	return render.Style{
 		FillColor:   c.GetColorPalette().BackgroundColor(),
 		StrokeColor: c.GetColorPalette().BackgroundStrokeColor(),
-		StrokeWidth: DefaultBackgroundStrokeWidth,
+		StrokeWidth: defaultBackgroundStrokeWidth,
 	}
 }
 
@@ -500,7 +500,7 @@ func (c Chart) styleDefaultsCanvas() render.Style {
 	return render.Style{
 		FillColor:   c.GetColorPalette().CanvasColor(),
 		StrokeColor: c.GetColorPalette().CanvasStrokeColor(),
-		StrokeWidth: DefaultCanvasStrokeWidth,
+		StrokeWidth: defaultCanvasStrokeWidth,
 	}
 }
 
@@ -508,7 +508,7 @@ func (c Chart) styleDefaultsSeries(seriesIndex int) render.Style {
 	return render.Style{
 		DotColor:    c.GetColorPalette().GetSeriesColor(seriesIndex),
 		StrokeColor: c.GetColorPalette().GetSeriesColor(seriesIndex),
-		StrokeWidth: DefaultSeriesLineWidth,
+		StrokeWidth: defaultSeriesLineWidth,
 		Font:        c.GetFont(),
 		FontSize:    render.DefaultFontSize,
 	}
@@ -518,9 +518,9 @@ func (c Chart) styleDefaultsAxes() render.Style {
 	return render.Style{
 		Font:        c.GetFont(),
 		FontColor:   c.GetColorPalette().TextColor(),
-		FontSize:    DefaultAxisFontSize,
+		FontSize:    defaultAxisFontSize,
 		StrokeColor: c.GetColorPalette().AxisStrokeColor(),
-		StrokeWidth: DefaultAxisLineWidth,
+		StrokeWidth: defaultAxisLineWidth,
 	}
 }
 
@@ -540,12 +540,12 @@ func (c Chart) GetColorPalette() render.ColorPalette {
 
 // Box returns the chart bounds as a box.
 func (c Chart) Box() render.Box {
-	dpr := c.Background.Padding.GetRight(DefaultBackgroundPadding.Right)
-	dpb := c.Background.Padding.GetBottom(DefaultBackgroundPadding.Bottom)
+	dpr := c.Background.Padding.GetRight(defaultBackgroundPadding.Right)
+	dpb := c.Background.Padding.GetBottom(defaultBackgroundPadding.Bottom)
 
 	return render.Box{
-		Top:    c.Background.Padding.GetTop(DefaultBackgroundPadding.Top),
-		Left:   c.Background.Padding.GetLeft(DefaultBackgroundPadding.Left),
+		Top:    c.Background.Padding.GetTop(defaultBackgroundPadding.Top),
+		Left:   c.Background.Padding.GetLeft(defaultBackgroundPadding.Left),
 		Right:  c.GetWidth() - dpr,
 		Bottom: c.GetHeight() - dpb,
 	}

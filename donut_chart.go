@@ -37,7 +37,7 @@ func (pc DonutChart) GetDPI(defaults ...float64) float64 {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
-		return DefaultDPI
+		return defaultDPI
 	}
 	return pc.DPI
 }
@@ -50,7 +50,7 @@ func (pc DonutChart) GetFont() render.Font {
 // GetWidth returns the chart width or the default value.
 func (pc DonutChart) GetWidth() int {
 	if pc.Width == 0 {
-		return DefaultChartWidth
+		return defaultChartWidth
 	}
 	return pc.Width
 }
@@ -58,7 +58,7 @@ func (pc DonutChart) GetWidth() int {
 // GetHeight returns the chart height or the default value.
 func (pc DonutChart) GetHeight() int {
 	if pc.Height == 0 {
-		return DefaultChartWidth
+		return defaultChartWidth
 	}
 	return pc.Height
 }
@@ -73,7 +73,7 @@ func (pc DonutChart) Render(rp render.RendererProvider, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	r.SetDPI(pc.GetDPI(DefaultDPI))
+	r.SetDPI(pc.GetDPI(defaultDPI))
 
 	canvasBox := pc.getDefaultCanvasBox()
 	canvasBox = pc.getCircleAdjustedCanvasBox(canvasBox)
@@ -293,12 +293,12 @@ func (pc DonutChart) GetColorPalette() render.ColorPalette {
 
 // Box returns the chart bounds as a box.
 func (pc DonutChart) Box() render.Box {
-	dpr := pc.Background.Padding.GetRight(DefaultBackgroundPadding.Right)
-	dpb := pc.Background.Padding.GetBottom(DefaultBackgroundPadding.Bottom)
+	dpr := pc.Background.Padding.GetRight(defaultBackgroundPadding.Right)
+	dpb := pc.Background.Padding.GetBottom(defaultBackgroundPadding.Bottom)
 
 	return render.Box{
-		Top:    pc.Background.Padding.GetTop(DefaultBackgroundPadding.Top),
-		Left:   pc.Background.Padding.GetLeft(DefaultBackgroundPadding.Left),
+		Top:    pc.Background.Padding.GetTop(defaultBackgroundPadding.Top),
+		Left:   pc.Background.Padding.GetLeft(defaultBackgroundPadding.Left),
 		Right:  pc.GetWidth() - dpr,
 		Bottom: pc.GetHeight() - dpb,
 	}

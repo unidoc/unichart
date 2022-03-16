@@ -71,8 +71,9 @@ func (ya YAxis) GetTicks(r render.Renderer, ra data.Range, defaults render.Style
 	if tp, isTickProvider := ra.(TicksProvider); isTickProvider {
 		return tp.GetTicks(r, defaults, vf)
 	}
+
 	tickStyle := ya.Style.InheritFrom(defaults)
-	return GenerateContinuousTicks(r, ra, true, tickStyle, vf)
+	return generateContinuousTicks(r, ra, true, tickStyle, vf)
 }
 
 // GetGridLines returns the gridlines for the axis.
@@ -87,9 +88,9 @@ func (ya YAxis) GetGridLines(ticks []Tick) []GridLine {
 func (ya YAxis) Measure(r render.Renderer, canvasBox render.Box, ra data.Range, defaults render.Style, ticks []Tick) render.Box {
 	var tx int
 	if ya.AxisType == series.YAxisPrimary {
-		tx = canvasBox.Right + DefaultYAxisMargin
+		tx = canvasBox.Right + defaultYAxisMargin
 	} else if ya.AxisType == series.YAxisSecondary {
-		tx = canvasBox.Left - DefaultYAxisMargin
+		tx = canvasBox.Left - defaultYAxisMargin
 	}
 
 	ya.TickStyle.InheritFrom(ya.Style.InheritFrom(defaults)).WriteToRenderer(r)
@@ -121,7 +122,7 @@ func (ya YAxis) Measure(r render.Renderer, canvasBox render.Box, ra data.Range, 
 	}
 
 	if !ya.NameStyle.Hidden && len(ya.Name) > 0 {
-		maxx += (DefaultYAxisMargin + maxTextHeight)
+		maxx += (defaultYAxisMargin + maxTextHeight)
 	}
 
 	return render.Box{
@@ -143,10 +144,10 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 	var tx int
 	if ya.AxisType == series.YAxisPrimary {
 		lx = canvasBox.Right + int(sw)
-		tx = lx + DefaultYAxisMargin
+		tx = lx + defaultYAxisMargin
 	} else if ya.AxisType == series.YAxisSecondary {
 		lx = canvasBox.Left - int(sw)
-		tx = lx - DefaultYAxisMargin
+		tx = lx - defaultYAxisMargin
 	}
 
 	r.MoveTo(lx, canvasBox.Bottom)
@@ -181,9 +182,9 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 
 		r.MoveTo(lx, ly)
 		if ya.AxisType == series.YAxisPrimary {
-			r.LineTo(lx+DefaultHorizontalTickWidth, ly)
+			r.LineTo(lx+defaultHorizontalTickWidth, ly)
 		} else if ya.AxisType == series.YAxisSecondary {
-			r.LineTo(lx-DefaultHorizontalTickWidth, ly)
+			r.LineTo(lx-defaultHorizontalTickWidth, ly)
 		}
 		r.Stroke()
 
@@ -197,9 +198,9 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 
 		var tx int
 		if ya.AxisType == series.YAxisPrimary {
-			tx = canvasBox.Right + int(sw) + DefaultYAxisMargin + maxTextWidth + DefaultYAxisMargin
+			tx = canvasBox.Right + int(sw) + defaultYAxisMargin + maxTextWidth + defaultYAxisMargin
 		} else if ya.AxisType == series.YAxisSecondary {
-			tx = canvasBox.Left - (DefaultYAxisMargin + int(sw) + maxTextWidth + DefaultYAxisMargin)
+			tx = canvasBox.Left - (defaultYAxisMargin + int(sw) + maxTextWidth + defaultYAxisMargin)
 		}
 
 		var ty int

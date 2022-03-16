@@ -43,7 +43,7 @@ type BarChart struct {
 // GetDPI returns the dpi for the chart.
 func (bc BarChart) GetDPI() float64 {
 	if bc.DPI == 0 {
-		return DefaultDPI
+		return defaultDPI
 	}
 	return bc.DPI
 }
@@ -56,7 +56,7 @@ func (bc BarChart) GetFont() render.Font {
 // GetWidth returns the chart width or the default value.
 func (bc BarChart) GetWidth() int {
 	if bc.Width == 0 {
-		return DefaultChartWidth
+		return defaultChartWidth
 	}
 	return bc.Width
 }
@@ -64,7 +64,7 @@ func (bc BarChart) GetWidth() int {
 // GetHeight returns the chart height or the default value.
 func (bc BarChart) GetHeight() int {
 	if bc.Height == 0 {
-		return DefaultChartHeight
+		return defaultChartHeight
 	}
 	return bc.Height
 }
@@ -72,7 +72,7 @@ func (bc BarChart) GetHeight() int {
 // GetBarSpacing returns the spacing between bars.
 func (bc BarChart) GetBarSpacing() int {
 	if bc.BarSpacing == 0 {
-		return DefaultBarSpacing
+		return defaultBarSpacing
 	}
 	return bc.BarSpacing
 }
@@ -80,7 +80,7 @@ func (bc BarChart) GetBarSpacing() int {
 // GetBarWidth returns the default bar width.
 func (bc BarChart) GetBarWidth() int {
 	if bc.BarWidth == 0 {
-		return DefaultBarWidth
+		return defaultBarWidth
 	}
 	return bc.BarWidth
 }
@@ -223,13 +223,13 @@ func (bc BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 		r.Stroke()
 
 		r.MoveTo(canvasBox.Left, canvasBox.Bottom)
-		r.LineTo(canvasBox.Left, canvasBox.Bottom+DefaultVerticalTickHeight)
+		r.LineTo(canvasBox.Left, canvasBox.Bottom+defaultVerticalTickHeight)
 		r.Stroke()
 
 		cursor := canvasBox.Left
 		for index, bar := range bc.Bars {
 			barLabelBox := render.Box{
-				Top:    canvasBox.Bottom + DefaultXAxisMargin,
+				Top:    canvasBox.Bottom + defaultXAxisMargin,
 				Left:   cursor,
 				Right:  cursor + width + spacing,
 				Bottom: bc.GetHeight(),
@@ -242,7 +242,7 @@ func (bc BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 			axisStyle.WriteToRenderer(r)
 			if index < len(bc.Bars)-1 {
 				r.MoveTo(barLabelBox.Right, canvasBox.Bottom)
-				r.LineTo(barLabelBox.Right, canvasBox.Bottom+DefaultVerticalTickHeight)
+				r.LineTo(barLabelBox.Right, canvasBox.Bottom+defaultVerticalTickHeight)
 				r.Stroke()
 			}
 			cursor += width + spacing
@@ -260,7 +260,7 @@ func (bc BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr data.Ra
 		r.Stroke()
 
 		r.MoveTo(canvasBox.Right, canvasBox.Bottom)
-		r.LineTo(canvasBox.Right+DefaultHorizontalTickWidth, canvasBox.Bottom)
+		r.LineTo(canvasBox.Right+defaultHorizontalTickWidth, canvasBox.Bottom)
 		r.Stroke()
 
 		var ty int
@@ -270,12 +270,12 @@ func (bc BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr data.Ra
 
 			axisStyle.GetStrokeOptions().WriteToRenderer(r)
 			r.MoveTo(canvasBox.Right, ty)
-			r.LineTo(canvasBox.Right+DefaultHorizontalTickWidth, ty)
+			r.LineTo(canvasBox.Right+defaultHorizontalTickWidth, ty)
 			r.Stroke()
 
 			axisStyle.GetTextOptions().WriteToRenderer(r)
 			tb = r.MeasureText(t.Label)
-			render.Text.Draw(r, t.Label, canvasBox.Right+DefaultYAxisMargin+5, ty+(tb.Height()>>1), axisStyle)
+			render.Text.Draw(r, t.Label, canvasBox.Right+defaultYAxisMargin+5, ty+(tb.Height()>>1), axisStyle)
 		}
 
 	}
@@ -294,7 +294,7 @@ func (bc BarChart) drawTitle(r render.Renderer) {
 		textHeight := textBox.Height()
 
 		titleX := (bc.GetWidth() >> 1) - (textWidth >> 1)
-		titleY := bc.TitleStyle.Padding.GetTop(DefaultTitleTop) + textHeight
+		titleY := bc.TitleStyle.Padding.GetTop(defaultTitleTop) + textHeight
 
 		r.Text(bc.Title, titleX, titleY)
 	}
@@ -308,7 +308,7 @@ func (bc BarChart) styleDefaultsCanvas() render.Style {
 	return render.Style{
 		FillColor:   bc.GetColorPalette().CanvasColor(),
 		StrokeColor: bc.GetColorPalette().CanvasStrokeColor(),
-		StrokeWidth: DefaultCanvasStrokeWidth,
+		StrokeWidth: defaultCanvasStrokeWidth,
 	}
 }
 
@@ -380,7 +380,7 @@ func (bc BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box,
 	_, _, totalWidth := bc.calculateScaledTotalWidth(canvasBox)
 
 	if !bc.XAxis.Hidden {
-		xaxisHeight := DefaultVerticalTickHeight
+		xaxisHeight := defaultVerticalTickHeight
 		axisStyle := bc.XAxis.InheritFrom(bc.styleDefaultsAxes())
 		axisStyle.WriteToRenderer(r)
 
@@ -388,7 +388,7 @@ func (bc BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box,
 		for _, bar := range bc.Bars {
 			if len(bar.Label) > 0 {
 				barLabelBox := render.Box{
-					Top:    canvasBox.Bottom + DefaultXAxisMargin,
+					Top:    canvasBox.Bottom + defaultXAxisMargin,
 					Left:   cursor,
 					Right:  cursor + bc.GetBarWidth() + bc.GetBarSpacing(),
 					Bottom: bc.GetHeight(),
@@ -396,7 +396,7 @@ func (bc BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box,
 				lines := render.Text.WrapFit(r, bar.Label, barLabelBox.Width(), axisStyle)
 				linesBox := render.Text.MeasureLines(r, lines, axisStyle)
 
-				xaxisHeight = mathutil.MinInt(linesBox.Height()+(2*DefaultXAxisMargin), xaxisHeight)
+				xaxisHeight = mathutil.MinInt(linesBox.Height()+(2*defaultXAxisMargin), xaxisHeight)
 			}
 		}
 
@@ -480,7 +480,7 @@ func (bc BarChart) styleDefaultsAxes() render.Style {
 	return render.Style{
 		StrokeColor:         bc.GetColorPalette().AxisStrokeColor(),
 		Font:                bc.GetFont(),
-		FontSize:            DefaultAxisFontSize,
+		FontSize:            defaultAxisFontSize,
 		FontColor:           bc.GetColorPalette().TextColor(),
 		TextHorizontalAlign: render.TextHorizontalAlignCenter,
 		TextVerticalAlign:   render.TextVerticalAlignTop,
