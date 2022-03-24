@@ -102,6 +102,10 @@ func ColorWithAlpha(c color.RGBA, a uint8) color.Color {
 
 // ColorIsZero returns true if the all the color components are zero.
 func ColorIsZero(c color.Color) bool {
+	if c == nil {
+		return true
+	}
+
 	r, g, b, a := c.RGBA()
 	return r == 0 && g == 0 && b == 0 && a == 0
 }
