@@ -11,20 +11,20 @@ type TextHorizontalAlign int
 
 const (
 	// TextHorizontalAlignUnset is an unset state for text horizontal alignment.
-	TextHorizontalAlignUnset TextHorizontalAlign = 0
+	TextHorizontalAlignUnset TextHorizontalAlign = iota
 
 	// TextHorizontalAlignLeft aligns a string horizontally so that it's left
 	// ligature starts at horizontal pixel 0.
-	TextHorizontalAlignLeft TextHorizontalAlign = 1
+	TextHorizontalAlignLeft
 
 	// TextHorizontalAlignCenter left aligns a string horizontally so that
 	// there are equal pixels to the left and to the right of a string within
 	// a box.
-	TextHorizontalAlignCenter TextHorizontalAlign = 2
+	TextHorizontalAlignCenter
 
 	// TextHorizontalAlignRight right aligns a string horizontally so that
 	// the right ligature ends at the right-most pixel of a box.
-	TextHorizontalAlignRight TextHorizontalAlign = 3
+	TextHorizontalAlignRight
 )
 
 // TextWrap is an enum for the word wrap options.
@@ -32,18 +32,18 @@ type TextWrap int
 
 const (
 	// TextWrapUnset is the unset state for text wrap options.
-	TextWrapUnset TextWrap = 0
+	TextWrapUnset TextWrap = iota
 
 	// TextWrapNone will spill text past horizontal boundaries.
-	TextWrapNone TextWrap = 1
+	TextWrapNone
 
 	// TextWrapWord will split a string on words (i.e. spaces) to fit within
 	// a horizontal boundary.
-	TextWrapWord TextWrap = 2
+	TextWrapWord
 
 	// TextWrapRune will split a string on a rune (i.e. utf-8 codepage) to fit
 	// within a horizontal boundary.
-	TextWrapRune TextWrap = 3
+	TextWrapRune
 )
 
 // TextVerticalAlign is an enum for the vertical alignment options.
@@ -51,27 +51,27 @@ type TextVerticalAlign int
 
 const (
 	// TextVerticalAlignUnset is the unset state for vertical alignment options.
-	TextVerticalAlignUnset TextVerticalAlign = 0
+	TextVerticalAlignUnset TextVerticalAlign = iota
 
 	// TextVerticalAlignBaseline aligns text according to the "baseline" of
 	// the string, or where a normal ascender begins.
-	TextVerticalAlignBaseline TextVerticalAlign = 1
+	TextVerticalAlignBaseline
 
 	// TextVerticalAlignBottom aligns the text according to the lowers pixel
 	// of any of the ligatures (ex. g or q both extend below the baseline).
-	TextVerticalAlignBottom TextVerticalAlign = 2
+	TextVerticalAlignBottom
 
 	// TextVerticalAlignMiddle aligns the text so that there is an equal
 	// amount of space above and below the top and bottom of the ligatures.
-	TextVerticalAlignMiddle TextVerticalAlign = 3
+	TextVerticalAlignMiddle
 
 	// TextVerticalAlignMiddleBaseline aligns the text vertically so that there
 	// is an equal number of pixels above and below the baseline of the string.
-	TextVerticalAlignMiddleBaseline TextVerticalAlign = 4
+	TextVerticalAlignMiddleBaseline
 
 	// TextVerticalAlignTop alignts the text so that the top of the ligatures
 	// are at y-pixel 0 in the container.
-	TextVerticalAlignTop TextVerticalAlign = 5
+	TextVerticalAlignTop
 )
 
 // TextStyle encapsulates text style options.

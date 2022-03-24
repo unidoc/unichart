@@ -92,3 +92,14 @@ type Renderer interface {
 
 // RendererProvider is a function that returns a renderer.
 type RendererProvider func(int, int) (Renderer, error)
+
+// ChartRenderable represents a chart renderable component.
+type ChartRenderable interface {
+	Width() int
+	SetWidth(width int)
+
+	Height() int
+	SetHeight(height int)
+
+	Render(rp RendererProvider, w io.Writer) error
+}
