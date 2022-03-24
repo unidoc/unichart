@@ -12,20 +12,15 @@ import (
 	"github.com/unidoc/unichart/render"
 )
 
-// Chart is what we're drawing.
+// Chart represents a line, curve or histogram chart.
 type Chart struct {
 	Title      string
 	TitleStyle render.Style
 
+	Font         render.Font
+	Background   render.Style
+	Canvas       render.Style
 	ColorPalette render.ColorPalette
-
-	Width  int
-	Height int
-	DPI    float64
-
-	Font       render.Font
-	Background render.Style
-	Canvas     render.Style
 
 	XAxis          XAxis
 	YAxis          YAxis
@@ -33,42 +28,61 @@ type Chart struct {
 
 	Series   []series.Series
 	Elements []render.Renderable
+
+	width  int
+	height int
+	dpi    float64
 }
 
-// GetDPI returns the dpi for the chart.
-func (c Chart) GetDPI(defaults ...float64) float64 {
-	if c.DPI == 0 {
+// DPI returns the DPI for the chart.
+func (c *Chart) DPI(defaults ...float64) float64 {
+	if c.dpi == 0 {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
 		return defaultDPI
 	}
-	return c.DPI
+	return c.dpi
+}
+
+// SetDPI sets the DPI for the chart.
+func (c *Chart) SetDPI(dpi float64) {
+	c.dpi = dpi
 }
 
 // GetFont returns the text font.
-func (c Chart) GetFont() render.Font {
+func (c *Chart) GetFont() render.Font {
 	return c.Font
 }
 
-// GetWidth returns the chart width or the default value.
-func (c Chart) GetWidth() int {
-	if c.Width == 0 {
+// Width returns the chart width.
+func (c *Chart) Width() int {
+	if c.width == 0 {
 		return defaultChartWidth
 	}
-	return c.Width
+	return c.width
 }
 
-// GetHeight returns the chart height or the default value.
-func (c Chart) GetHeight() int {
-	if c.Height == 0 {
+// SetWidth sets the chart width.
+func (c *Chart) SetWidth(width int) {
+	c.width = width
+}
+
+// Height returns the chart height.
+func (c *Chart) Height() int {
+	if c.height == 0 {
 		return defaultChartHeight
 	}
-	return c.Height
+	return c.height
+}
+
+// SetHeight sets the chart height.
+func (c *Chart) SetHeight(height int) {
+	c.height = height
 }
 
 // Render renders the chart with the given renderer to the given io.Writer.
-func (c Chart) Render(rp render.RendererProvider, w io.Writer) error {
+func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 	if len(c.Series) == 0 {
 		return errors.New("please provide at least one series")
 	}
@@ -78,11 +92,11 @@ func (c Chart) Render(rp render.RendererProvider, w io.Writer) error {
 
 	c.YAxisSecondary.AxisType = series.YAxisSecondary
 
-	r, err := rp(c.GetWidth(), c.GetHeight())
+	r, err := rp(c.Width(), c.Height())
 	if err != nil {
 		return err
 	}
-	r.SetDPI(c.GetDPI(defaultDPI))
+	r.SetDPI(c.DPI(defaultDPI))
 
 	c.drawBackground(r)
 
@@ -130,7 +144,7 @@ func (c Chart) Render(rp render.RendererProvider, w io.Writer) error {
 	return r.Save(w)
 }
 
-func (c Chart) checkHasVisibleSeries() error {
+func (c *Chart) checkHasVisibleSeries() error {
 	var style render.Style
 	for _, s := range c.Series {
 		style = s.GetStyle()
@@ -141,7 +155,7 @@ func (c Chart) checkHasVisibleSeries() error {
 	return fmt.Errorf("chart render; must have (1) visible series")
 }
 
-func (c Chart) validateSeries() error {
+func (c *Chart) validateSeries() error {
 	var err error
 	for _, s := range c.Series {
 		err = s.Validate()
@@ -152,7 +166,7 @@ func (c Chart) validateSeries() error {
 	return nil
 }
 
-func (c Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
+func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 	var minx, maxx float64 = math.MaxFloat64, -math.MaxFloat64
 	var miny, maxy float64 = math.MaxFloat64, -math.MaxFloat64
 	var minya, maxya float64 = math.MaxFloat64, -math.MaxFloat64
@@ -283,7 +297,7 @@ func (c Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 	return
 }
 
-func (c Chart) checkRanges(xr, yr, yra data.Range) error {
+func (c *Chart) checkRanges(xr, yr, yra data.Range) error {
 	xDelta := xr.GetDelta()
 	if math.IsInf(xDelta, 0) {
 		return errors.New("infinite x-range delta")
@@ -316,11 +330,11 @@ func (c Chart) checkRanges(xr, yr, yra data.Range) error {
 	return nil
 }
 
-func (c Chart) getDefaultCanvasBox() render.Box {
+func (c *Chart) getDefaultCanvasBox() render.Box {
 	return c.Box()
 }
 
-func (c Chart) getValueFormatters() (x, y, ya data.ValueFormatter) {
+func (c *Chart) getValueFormatters() (x, y, ya data.ValueFormatter) {
 	for _, s := range c.Series {
 		if vfp, isVfp := s.(data.ValueFormatterProvider); isVfp {
 			sx, sy := vfp.GetValueFormatters()
@@ -345,11 +359,11 @@ func (c Chart) getValueFormatters() (x, y, ya data.ValueFormatter) {
 	return
 }
 
-func (c Chart) hasAxes() bool {
+func (c *Chart) hasAxes() bool {
 	return !c.XAxis.Style.Hidden || !c.YAxis.Style.Hidden || !c.YAxisSecondary.Style.Hidden
 }
 
-func (c Chart) getAxesTicks(r render.Renderer, xr, yr, yar data.Range, xf, yf, yfa data.ValueFormatter) (xticks, yticks, yticksAlt []Tick) {
+func (c *Chart) getAxesTicks(r render.Renderer, xr, yr, yar data.Range, xf, yf, yfa data.ValueFormatter) (xticks, yticks, yticksAlt []Tick) {
 	if !c.XAxis.Style.Hidden {
 		xticks = c.XAxis.GetTicks(r, xr, c.styleDefaultsAxes(), xf)
 	}
@@ -362,7 +376,7 @@ func (c Chart) getAxesTicks(r render.Renderer, xr, yr, yar data.Range, xf, yf, y
 	return
 }
 
-func (c Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra data.Range, xticks, yticks, yticksAlt []Tick) render.Box {
+func (c *Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra data.Range, xticks, yticks, yticksAlt []Tick) render.Box {
 	axesOuterBox := canvasBox.Clone()
 	if !c.XAxis.Style.Hidden {
 		axesBounds := c.XAxis.Measure(r, canvasBox, xr, c.styleDefaultsAxes(), xticks)
@@ -380,14 +394,14 @@ func (c Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box,
 	return canvasBox.OuterConstrain(c.Box(), axesOuterBox)
 }
 
-func (c Chart) setRangeDomains(canvasBox render.Box, xr, yr, yra data.Range) (data.Range, data.Range, data.Range) {
+func (c *Chart) setRangeDomains(canvasBox render.Box, xr, yr, yra data.Range) (data.Range, data.Range, data.Range) {
 	xr.SetDomain(canvasBox.Width())
 	yr.SetDomain(canvasBox.Height())
 	yra.SetDomain(canvasBox.Height())
 	return xr, yr, yra
 }
 
-func (c Chart) hasAnnotationSeries() bool {
+func (c *Chart) hasAnnotationSeries() bool {
 	for _, s := range c.Series {
 		if as, isAnnotationSeries := s.(series.AnnotationSeries); isAnnotationSeries {
 			if !as.GetStyle().Hidden {
@@ -398,7 +412,7 @@ func (c Chart) hasAnnotationSeries() bool {
 	return false
 }
 
-func (c Chart) hasSecondarySeries() bool {
+func (c *Chart) hasSecondarySeries() bool {
 	for _, s := range c.Series {
 		if s.GetYAxis() == series.YAxisSecondary {
 			return true
@@ -407,7 +421,7 @@ func (c Chart) hasSecondarySeries() bool {
 	return false
 }
 
-func (c Chart) getAnnotationAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra data.Range, xf, yf, yfa data.ValueFormatter) render.Box {
+func (c *Chart) getAnnotationAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra data.Range, xf, yf, yfa data.ValueFormatter) render.Box {
 	annotationSeriesBox := canvasBox.Clone()
 	for seriesIndex, s := range c.Series {
 		if as, isAnnotationSeries := s.(series.AnnotationSeries); isAnnotationSeries {
@@ -428,26 +442,26 @@ func (c Chart) getAnnotationAdjustedCanvasBox(r render.Renderer, canvasBox rende
 	return canvasBox.OuterConstrain(c.Box(), annotationSeriesBox)
 }
 
-func (c Chart) getBackgroundStyle() render.Style {
+func (c *Chart) getBackgroundStyle() render.Style {
 	return c.Background.InheritFrom(c.styleDefaultsBackground())
 }
 
-func (c Chart) drawBackground(r render.Renderer) {
+func (c *Chart) drawBackground(r render.Renderer) {
 	render.Box{
-		Right:  c.GetWidth(),
-		Bottom: c.GetHeight(),
+		Right:  c.Width(),
+		Bottom: c.Height(),
 	}.Draw(r, c.getBackgroundStyle())
 }
 
-func (c Chart) getCanvasStyle() render.Style {
+func (c *Chart) getCanvasStyle() render.Style {
 	return c.Canvas.InheritFrom(c.styleDefaultsCanvas())
 }
 
-func (c Chart) drawCanvas(r render.Renderer, canvasBox render.Box) {
+func (c *Chart) drawCanvas(r render.Renderer, canvasBox render.Box) {
 	canvasBox.Draw(r, c.getCanvasStyle())
 }
 
-func (c Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt data.Range, xticks, yticks, yticksAlt []Tick) {
+func (c *Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt data.Range, xticks, yticks, yticksAlt []Tick) {
 	if !c.XAxis.Style.Hidden {
 		c.XAxis.Render(r, canvasBox, xrange, c.styleDefaultsAxes(), xticks)
 	}
@@ -459,7 +473,7 @@ func (c Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange,
 	}
 }
 
-func (c Chart) drawSeries(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt data.Range, s series.Series, seriesIndex int) {
+func (c *Chart) drawSeries(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt data.Range, s series.Series, seriesIndex int) {
 	if !s.GetStyle().Hidden {
 		if s.GetYAxis() == series.YAxisPrimary {
 			s.Render(r, canvasBox, xrange, yrange, c.styleDefaultsSeries(seriesIndex))
@@ -469,7 +483,7 @@ func (c Chart) drawSeries(r render.Renderer, canvasBox render.Box, xrange, yrang
 	}
 }
 
-func (c Chart) drawTitle(r render.Renderer) {
+func (c *Chart) drawTitle(r render.Renderer) {
 	if len(c.Title) > 0 && !c.TitleStyle.Hidden {
 		r.SetFont(c.TitleStyle.GetFont(c.GetFont()))
 		r.SetFontColor(c.TitleStyle.GetFontColor(c.GetColorPalette().TextColor()))
@@ -481,14 +495,14 @@ func (c Chart) drawTitle(r render.Renderer) {
 		textWidth := textBox.Width()
 		textHeight := textBox.Height()
 
-		titleX := (c.GetWidth() >> 1) - (textWidth >> 1)
+		titleX := (c.Width() >> 1) - (textWidth >> 1)
 		titleY := c.TitleStyle.Padding.GetTop(defaultTitleTop) + textHeight
 
 		r.Text(c.Title, titleX, titleY)
 	}
 }
 
-func (c Chart) styleDefaultsBackground() render.Style {
+func (c *Chart) styleDefaultsBackground() render.Style {
 	return render.Style{
 		FillColor:   c.GetColorPalette().BackgroundColor(),
 		StrokeColor: c.GetColorPalette().BackgroundStrokeColor(),
@@ -496,7 +510,7 @@ func (c Chart) styleDefaultsBackground() render.Style {
 	}
 }
 
-func (c Chart) styleDefaultsCanvas() render.Style {
+func (c *Chart) styleDefaultsCanvas() render.Style {
 	return render.Style{
 		FillColor:   c.GetColorPalette().CanvasColor(),
 		StrokeColor: c.GetColorPalette().CanvasStrokeColor(),
@@ -504,7 +518,7 @@ func (c Chart) styleDefaultsCanvas() render.Style {
 	}
 }
 
-func (c Chart) styleDefaultsSeries(seriesIndex int) render.Style {
+func (c *Chart) styleDefaultsSeries(seriesIndex int) render.Style {
 	return render.Style{
 		DotColor:    c.GetColorPalette().GetSeriesColor(seriesIndex),
 		StrokeColor: c.GetColorPalette().GetSeriesColor(seriesIndex),
@@ -514,7 +528,7 @@ func (c Chart) styleDefaultsSeries(seriesIndex int) render.Style {
 	}
 }
 
-func (c Chart) styleDefaultsAxes() render.Style {
+func (c *Chart) styleDefaultsAxes() render.Style {
 	return render.Style{
 		Font:        c.GetFont(),
 		FontColor:   c.GetColorPalette().TextColor(),
@@ -524,14 +538,14 @@ func (c Chart) styleDefaultsAxes() render.Style {
 	}
 }
 
-func (c Chart) styleDefaultsElements() render.Style {
+func (c *Chart) styleDefaultsElements() render.Style {
 	return render.Style{
 		Font: c.GetFont(),
 	}
 }
 
 // GetColorPalette returns the color palette for the chart.
-func (c Chart) GetColorPalette() render.ColorPalette {
+func (c *Chart) GetColorPalette() render.ColorPalette {
 	if c.ColorPalette != nil {
 		return c.ColorPalette
 	}
@@ -539,14 +553,14 @@ func (c Chart) GetColorPalette() render.ColorPalette {
 }
 
 // Box returns the chart bounds as a box.
-func (c Chart) Box() render.Box {
+func (c *Chart) Box() render.Box {
 	dpr := c.Background.Padding.GetRight(defaultBackgroundPadding.Right)
 	dpb := c.Background.Padding.GetBottom(defaultBackgroundPadding.Bottom)
 
 	return render.Box{
 		Top:    c.Background.Padding.GetTop(defaultBackgroundPadding.Top),
 		Left:   c.Background.Padding.GetLeft(defaultBackgroundPadding.Left),
-		Right:  c.GetWidth() - dpr,
-		Bottom: c.GetHeight() - dpb,
+		Right:  c.Width() - dpr,
+		Bottom: c.Height() - dpb,
 	}
 }
