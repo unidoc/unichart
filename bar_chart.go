@@ -17,15 +17,10 @@ type BarChart struct {
 	Title      string
 	TitleStyle render.Style
 
+	Font         render.Font
+	Background   render.Style
+	Canvas       render.Style
 	ColorPalette render.ColorPalette
-
-	Width  int
-	Height int
-	DPI    float64
-
-	Font       render.Font
-	Background render.Style
-	Canvas     render.Style
 
 	XAxis render.Style
 	YAxis YAxis
@@ -38,39 +33,58 @@ type BarChart struct {
 
 	Bars     []series.Value
 	Elements []render.Renderable
+
+	width  int
+	height int
+	dpi    float64
 }
 
-// GetDPI returns the dpi for the chart.
-func (bc BarChart) GetDPI() float64 {
-	if bc.DPI == 0 {
+// DPI returns the DPI for the chart.
+func (bc *BarChart) DPI() float64 {
+	if bc.dpi == 0 {
 		return defaultDPI
 	}
-	return bc.DPI
+	return bc.dpi
+}
+
+// SetDPI sets the DPI for the chart.
+func (bc *BarChart) SetDPI(dpi float64) {
+	bc.dpi = dpi
 }
 
 // GetFont returns the text font.
-func (bc BarChart) GetFont() render.Font {
+func (bc *BarChart) GetFont() render.Font {
 	return bc.Font
 }
 
-// GetWidth returns the chart width or the default value.
-func (bc BarChart) GetWidth() int {
-	if bc.Width == 0 {
+// Width returns the chart width or the default value.
+func (bc *BarChart) Width() int {
+	if bc.width == 0 {
 		return defaultChartWidth
 	}
-	return bc.Width
+	return bc.width
 }
 
-// GetHeight returns the chart height or the default value.
-func (bc BarChart) GetHeight() int {
-	if bc.Height == 0 {
+// SetWidth sets the chart width.
+func (bc *BarChart) SetWidth(width int) {
+	bc.width = width
+}
+
+// Height returns the chart height or the default value.
+func (bc *BarChart) Height() int {
+	if bc.height == 0 {
 		return defaultChartHeight
 	}
-	return bc.Height
+	return bc.height
+}
+
+// SetHeight sets the chart height.
+func (bc *BarChart) SetHeight(height int) {
+	bc.height = height
 }
 
 // GetBarSpacing returns the spacing between bars.
-func (bc BarChart) GetBarSpacing() int {
+func (bc *BarChart) GetBarSpacing() int {
 	if bc.BarSpacing == 0 {
 		return defaultBarSpacing
 	}
@@ -78,7 +92,7 @@ func (bc BarChart) GetBarSpacing() int {
 }
 
 // GetBarWidth returns the default bar width.
-func (bc BarChart) GetBarWidth() int {
+func (bc *BarChart) GetBarWidth() int {
 	if bc.BarWidth == 0 {
 		return defaultBarWidth
 	}
@@ -86,16 +100,16 @@ func (bc BarChart) GetBarWidth() int {
 }
 
 // Render renders the chart with the given renderer to the given io.Writer.
-func (bc BarChart) Render(rp render.RendererProvider, w io.Writer) error {
+func (bc *BarChart) Render(rp render.RendererProvider, w io.Writer) error {
 	if len(bc.Bars) == 0 {
 		return errors.New("please provide at least one bar")
 	}
 
-	r, err := rp(bc.GetWidth(), bc.GetHeight())
+	r, err := rp(bc.Width(), bc.Height())
 	if err != nil {
 		return err
 	}
-	r.SetDPI(bc.GetDPI())
+	r.SetDPI(bc.DPI())
 
 	bc.drawBackground(r)
 
@@ -130,11 +144,11 @@ func (bc BarChart) Render(rp render.RendererProvider, w io.Writer) error {
 	return r.Save(w)
 }
 
-func (bc BarChart) drawCanvas(r render.Renderer, canvasBox render.Box) {
+func (bc *BarChart) drawCanvas(r render.Renderer, canvasBox render.Box) {
 	canvasBox.Draw(r, bc.getCanvasStyle())
 }
 
-func (bc BarChart) getRanges() data.Range {
+func (bc *BarChart) getRanges() data.Range {
 	var yrange data.Range
 	if bc.YAxis.Range != nil && !bc.YAxis.Range.IsZero() {
 		yrange = bc.YAxis.Range
@@ -169,14 +183,14 @@ func (bc BarChart) getRanges() data.Range {
 	return yrange
 }
 
-func (bc BarChart) drawBackground(r render.Renderer) {
+func (bc *BarChart) drawBackground(r render.Renderer) {
 	render.Box{
-		Right:  bc.GetWidth(),
-		Bottom: bc.GetHeight(),
+		Right:  bc.Width(),
+		Bottom: bc.Height(),
 	}.Draw(r, bc.getBackgroundStyle())
 }
 
-func (bc BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr data.Range) {
+func (bc *BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr data.Range) {
 	xoffset := canvasBox.Left
 
 	width, spacing, _ := bc.calculateScaledTotalWidth(canvasBox)
@@ -211,7 +225,7 @@ func (bc BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr data.Ran
 	}
 }
 
-func (bc BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
+func (bc *BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 	if !bc.XAxis.Hidden {
 		axisStyle := bc.XAxis.InheritFrom(bc.styleDefaultsAxes())
 		axisStyle.WriteToRenderer(r)
@@ -232,7 +246,7 @@ func (bc BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 				Top:    canvasBox.Bottom + defaultXAxisMargin,
 				Left:   cursor,
 				Right:  cursor + width + spacing,
-				Bottom: bc.GetHeight(),
+				Bottom: bc.Height(),
 			}
 
 			if len(bar.Label) > 0 {
@@ -250,7 +264,7 @@ func (bc BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 	}
 }
 
-func (bc BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr data.Range, ticks []Tick) {
+func (bc *BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr data.Range, ticks []Tick) {
 	if !bc.YAxis.Style.Hidden {
 		axisStyle := bc.YAxis.Style.InheritFrom(bc.styleDefaultsAxes())
 		axisStyle.WriteToRenderer(r)
@@ -281,7 +295,7 @@ func (bc BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr data.Ra
 	}
 }
 
-func (bc BarChart) drawTitle(r render.Renderer) {
+func (bc *BarChart) drawTitle(r render.Renderer) {
 	if len(bc.Title) > 0 && !bc.TitleStyle.Hidden {
 		r.SetFont(bc.TitleStyle.GetFont(bc.GetFont()))
 		r.SetFontColor(bc.TitleStyle.GetFontColor(bc.GetColorPalette().TextColor()))
@@ -293,18 +307,18 @@ func (bc BarChart) drawTitle(r render.Renderer) {
 		textWidth := textBox.Width()
 		textHeight := textBox.Height()
 
-		titleX := (bc.GetWidth() >> 1) - (textWidth >> 1)
+		titleX := (bc.Width() >> 1) - (textWidth >> 1)
 		titleY := bc.TitleStyle.Padding.GetTop(defaultTitleTop) + textHeight
 
 		r.Text(bc.Title, titleX, titleY)
 	}
 }
 
-func (bc BarChart) getCanvasStyle() render.Style {
+func (bc *BarChart) getCanvasStyle() render.Style {
 	return bc.Canvas.InheritFrom(bc.styleDefaultsCanvas())
 }
 
-func (bc BarChart) styleDefaultsCanvas() render.Style {
+func (bc *BarChart) styleDefaultsCanvas() render.Style {
 	return render.Style{
 		FillColor:   bc.GetColorPalette().CanvasColor(),
 		StrokeColor: bc.GetColorPalette().CanvasStrokeColor(),
@@ -312,34 +326,34 @@ func (bc BarChart) styleDefaultsCanvas() render.Style {
 	}
 }
 
-func (bc BarChart) hasAxes() bool {
+func (bc *BarChart) hasAxes() bool {
 	return !bc.YAxis.Style.Hidden
 }
 
-func (bc BarChart) setRangeDomains(canvasBox render.Box, yr data.Range) data.Range {
+func (bc *BarChart) setRangeDomains(canvasBox render.Box, yr data.Range) data.Range {
 	yr.SetDomain(canvasBox.Height())
 	return yr
 }
 
-func (bc BarChart) getDefaultCanvasBox() render.Box {
+func (bc *BarChart) getDefaultCanvasBox() render.Box {
 	return bc.box()
 }
 
-func (bc BarChart) getValueFormatters() data.ValueFormatter {
+func (bc *BarChart) getValueFormatters() data.ValueFormatter {
 	if bc.YAxis.ValueFormatter != nil {
 		return bc.YAxis.ValueFormatter
 	}
 	return data.FloatValueFormatter
 }
 
-func (bc BarChart) getAxesTicks(r render.Renderer, yr data.Range, yf data.ValueFormatter) (yticks []Tick) {
+func (bc *BarChart) getAxesTicks(r render.Renderer, yr data.Range, yf data.ValueFormatter) (yticks []Tick) {
 	if !bc.YAxis.Style.Hidden {
 		yticks = bc.YAxis.GetTicks(r, yr, bc.styleDefaultsAxes(), yf)
 	}
 	return
 }
 
-func (bc BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
+func (bc *BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
 	totalWithBaseSpacing := bc.calculateTotalBarWidth(bc.GetBarWidth(), bc.GetBarSpacing())
 	if totalWithBaseSpacing > canvasBox.Width() {
 		lessBarWidths := canvasBox.Width() - (len(bc.Bars) * bc.GetBarWidth())
@@ -351,7 +365,7 @@ func (bc BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
 	return bc.GetBarSpacing()
 }
 
-func (bc BarChart) calculateEffectiveBarWidth(canvasBox render.Box, spacing int) int {
+func (bc *BarChart) calculateEffectiveBarWidth(canvasBox render.Box, spacing int) int {
 	totalWithBaseWidth := bc.calculateTotalBarWidth(bc.GetBarWidth(), spacing)
 	if totalWithBaseWidth > canvasBox.Width() {
 		totalLessBarSpacings := canvasBox.Width() - (len(bc.Bars) * spacing)
@@ -363,18 +377,18 @@ func (bc BarChart) calculateEffectiveBarWidth(canvasBox render.Box, spacing int)
 	return bc.GetBarWidth()
 }
 
-func (bc BarChart) calculateTotalBarWidth(barWidth, spacing int) int {
+func (bc *BarChart) calculateTotalBarWidth(barWidth, spacing int) int {
 	return len(bc.Bars) * (barWidth + spacing)
 }
 
-func (bc BarChart) calculateScaledTotalWidth(canvasBox render.Box) (width, spacing, total int) {
+func (bc *BarChart) calculateScaledTotalWidth(canvasBox render.Box) (width, spacing, total int) {
 	spacing = bc.calculateEffectiveBarSpacing(canvasBox)
 	width = bc.calculateEffectiveBarWidth(canvasBox, spacing)
 	total = bc.calculateTotalBarWidth(width, spacing)
 	return
 }
 
-func (bc BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, yrange data.Range, yticks []Tick) render.Box {
+func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, yrange data.Range, yticks []Tick) render.Box {
 	axesOuterBox := canvasBox.Clone()
 
 	_, _, totalWidth := bc.calculateScaledTotalWidth(canvasBox)
@@ -391,7 +405,7 @@ func (bc BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box,
 					Top:    canvasBox.Bottom + defaultXAxisMargin,
 					Left:   cursor,
 					Right:  cursor + bc.GetBarWidth() + bc.GetBarSpacing(),
-					Bottom: bc.GetHeight(),
+					Bottom: bc.Height(),
 				}
 				lines := render.Text.WrapFit(r, bar.Label, barLabelBox.Width(), axisStyle)
 				linesBox := render.Text.MeasureLines(r, lines, axisStyle)
@@ -404,7 +418,7 @@ func (bc BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box,
 			Top:    canvasBox.Top,
 			Left:   canvasBox.Left,
 			Right:  canvasBox.Left + totalWidth,
-			Bottom: bc.GetHeight() - xaxisHeight,
+			Bottom: bc.Height() - xaxisHeight,
 		}
 
 		axesOuterBox = axesOuterBox.Grow(xbox)
@@ -419,23 +433,23 @@ func (bc BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box,
 }
 
 // box returns the chart bounds as a box.
-func (bc BarChart) box() render.Box {
+func (bc *BarChart) box() render.Box {
 	dpr := bc.Background.Padding.GetRight(10)
 	dpb := bc.Background.Padding.GetBottom(50)
 
 	return render.Box{
 		Top:    bc.Background.Padding.GetTop(20),
 		Left:   bc.Background.Padding.GetLeft(20),
-		Right:  bc.GetWidth() - dpr,
-		Bottom: bc.GetHeight() - dpb,
+		Right:  bc.Width() - dpr,
+		Bottom: bc.Height() - dpb,
 	}
 }
 
-func (bc BarChart) getBackgroundStyle() render.Style {
+func (bc *BarChart) getBackgroundStyle() render.Style {
 	return bc.Background.InheritFrom(bc.styleDefaultsBackground())
 }
 
-func (bc BarChart) styleDefaultsBackground() render.Style {
+func (bc *BarChart) styleDefaultsBackground() render.Style {
 	return render.Style{
 		FillColor:   bc.GetColorPalette().BackgroundColor(),
 		StrokeColor: bc.GetColorPalette().BackgroundStrokeColor(),
@@ -443,7 +457,7 @@ func (bc BarChart) styleDefaultsBackground() render.Style {
 	}
 }
 
-func (bc BarChart) styleDefaultsBar(index int) render.Style {
+func (bc *BarChart) styleDefaultsBar(index int) render.Style {
 	return render.Style{
 		StrokeColor: bc.GetColorPalette().GetSeriesColor(index),
 		StrokeWidth: 3.0,
@@ -451,7 +465,7 @@ func (bc BarChart) styleDefaultsBar(index int) render.Style {
 	}
 }
 
-func (bc BarChart) styleDefaultsTitle() render.Style {
+func (bc *BarChart) styleDefaultsTitle() render.Style {
 	return bc.TitleStyle.InheritFrom(render.Style{
 		FontColor:           bc.GetColorPalette().TextColor(),
 		Font:                bc.GetFont(),
@@ -462,8 +476,8 @@ func (bc BarChart) styleDefaultsTitle() render.Style {
 	})
 }
 
-func (bc BarChart) getTitleFontSize() float64 {
-	effectiveDimension := mathutil.MinInt(bc.GetWidth(), bc.GetHeight())
+func (bc *BarChart) getTitleFontSize() float64 {
+	effectiveDimension := mathutil.MinInt(bc.Width(), bc.Height())
 	if effectiveDimension >= 2048 {
 		return 48
 	} else if effectiveDimension >= 1024 {
@@ -476,7 +490,7 @@ func (bc BarChart) getTitleFontSize() float64 {
 	return 10
 }
 
-func (bc BarChart) styleDefaultsAxes() render.Style {
+func (bc *BarChart) styleDefaultsAxes() render.Style {
 	return render.Style{
 		StrokeColor:         bc.GetColorPalette().AxisStrokeColor(),
 		Font:                bc.GetFont(),
@@ -488,14 +502,14 @@ func (bc BarChart) styleDefaultsAxes() render.Style {
 	}
 }
 
-func (bc BarChart) styleDefaultsElements() render.Style {
+func (bc *BarChart) styleDefaultsElements() render.Style {
 	return render.Style{
 		Font: bc.GetFont(),
 	}
 }
 
 // GetColorPalette returns the color palette for the chart.
-func (bc BarChart) GetColorPalette() render.ColorPalette {
+func (bc *BarChart) GetColorPalette() render.ColorPalette {
 	if bc.ColorPalette != nil {
 		return bc.ColorPalette
 	}
