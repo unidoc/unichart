@@ -150,23 +150,26 @@ func (pc *DonutChart) drawSlices(r render.Renderer, canvasBox render.Box, values
 			r.ArcTo(cx, cy, (radius / 1.25), (radius / 1.25), rads, delta)
 
 			r.LineTo(cx, cy)
-			r.Close()
 			r.FillStroke()
+			r.Close()
 			total = total + v.Value
 		}
 	}
 
 	// Draw the donut hole.
 	v := series.Value{Value: 100, Label: "center"}
-	styletemp := pc.SliceStyle.InheritFrom(render.Style{
-		StrokeColor: render.ColorWhite, StrokeWidth: 4.0, FillColor: render.ColorWhite, FontColor: render.ColorWhite, //Font:        pc.GetFont(),//FontSize:    pc.getScaledFontSize(),
+	tempStyle := pc.SliceStyle.InheritFrom(render.Style{
+		FillColor:   render.ColorWhite,
+		StrokeColor: render.ColorWhite,
+		StrokeWidth: 4.0,
 	})
-	v.Style.InheritFrom(styletemp).WriteToRenderer(r)
+	v.Style.InheritFrom(tempStyle).WriteToRenderer(r)
+
 	r.MoveTo(cx, cy)
 	r.ArcTo(cx, cy, (radius / 3.5), (radius / 3.5), mathutil.DegreesToRadians(0), mathutil.DegreesToRadians(359))
 	r.LineTo(cx, cy)
-	r.Close()
 	r.FillStroke()
+	r.Close()
 
 	// Draw the labels.
 	total = 0
