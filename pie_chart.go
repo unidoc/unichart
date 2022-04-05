@@ -151,8 +151,8 @@ func (pc *PieChart) drawSlices(r render.Renderer, canvasBox render.Box, values [
 			r.ArcTo(cx, cy, radius, radius, rads, delta)
 
 			r.LineTo(cx, cy)
-			r.Close()
 			r.FillStroke()
+			r.Close()
 			total = total + v.Value
 		}
 	}
