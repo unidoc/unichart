@@ -131,7 +131,7 @@ func (pc *PieChart) drawSlices(r render.Renderer, canvasBox render.Box, values [
 	radius := float64(diameter >> 1)
 	labelRadius := (radius * 2.0) / 3.0
 
-	// draw the pie slices
+	// Draw the pie slices.
 	var rads, delta, delta2, total float64
 	var lx, ly int
 
@@ -139,6 +139,7 @@ func (pc *PieChart) drawSlices(r render.Renderer, canvasBox render.Box, values [
 		pc.stylePieChartValue(0).WriteToRenderer(r)
 		r.MoveTo(cx, cy)
 		r.Circle(radius, cx, cy)
+		r.FillStroke()
 	} else {
 		for index, v := range values {
 			v.Style.InheritFrom(pc.stylePieChartValue(index)).WriteToRenderer(r)
@@ -156,7 +157,7 @@ func (pc *PieChart) drawSlices(r render.Renderer, canvasBox render.Box, values [
 		}
 	}
 
-	// draw the labels
+	// Draw the labels.
 	total = 0
 	for index, v := range values {
 		v.Style.InheritFrom(pc.stylePieChartValue(index)).WriteToRenderer(r)

@@ -131,7 +131,7 @@ func (pc *DonutChart) drawSlices(r render.Renderer, canvasBox render.Box, values
 	radius := float64(diameter>>1) / 1.1
 	labelRadius := (radius * 2.83) / 3.0
 
-	// draw the donut slices
+	// Draw the donut slices.
 	var rads, delta, delta2, total float64
 	var lx, ly int
 
@@ -139,6 +139,7 @@ func (pc *DonutChart) drawSlices(r render.Renderer, canvasBox render.Box, values
 		pc.styleDonutChartValue(0).WriteToRenderer(r)
 		r.MoveTo(cx, cy)
 		r.Circle(radius, cx, cy)
+		r.FillStroke()
 	} else {
 		for index, v := range values {
 			v.Style.InheritFrom(pc.styleDonutChartValue(index)).WriteToRenderer(r)
@@ -155,7 +156,7 @@ func (pc *DonutChart) drawSlices(r render.Renderer, canvasBox render.Box, values
 		}
 	}
 
-	//making the donut hole
+	// Draw the donut hole.
 	v := series.Value{Value: 100, Label: "center"}
 	styletemp := pc.SliceStyle.InheritFrom(render.Style{
 		StrokeColor: render.ColorWhite, StrokeWidth: 4.0, FillColor: render.ColorWhite, FontColor: render.ColorWhite, //Font:        pc.GetFont(),//FontSize:    pc.getScaledFontSize(),
@@ -167,7 +168,7 @@ func (pc *DonutChart) drawSlices(r render.Renderer, canvasBox render.Box, values
 	r.Close()
 	r.FillStroke()
 
-	// draw the labels
+	// Draw the labels.
 	total = 0
 	for index, v := range values {
 		v.Style.InheritFrom(pc.styleDonutChartValue(index)).WriteToRenderer(r)
