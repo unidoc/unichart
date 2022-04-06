@@ -7,7 +7,7 @@ and continuous line charts.
 # Installation
 
 ```bash
-> go get -u github.com/unidoc/unichart
+go get -u github.com/unidoc/unichart
 ```
 
 # License
@@ -18,8 +18,10 @@ See [LICENSE](LICENSE) for more details.
 A commercial license is required in order to use this project with [unipdf](https://github.com/unidoc/unipdf).
 There are two options:
 
-- Metered License API keys. Free ones can be obtained at https://cloud.unidoc.io.
-- Offline Perpetual codes. Can be purchased at https://unidoc.io/pricing.
+- Metered License API keys.
+  - Free ones can be obtained at https://cloud.unidoc.io.
+- Offline Perpetual codes.
+  - Can be purchased at https://unidoc.io/pricing.
 
 # Credits
 
