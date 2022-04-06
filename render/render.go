@@ -9,9 +9,9 @@ import (
 // elements on the chart.
 type Renderable func(r Renderer, canvasBox Box, defaults Style)
 
-// Renderer represents the basic methods required to draw a chart.
+// Renderer represents a chart renderer.
 type Renderer interface {
-	// ResetStyle should reset any style related settings on the renderer.
+	// ResetStyle resets all the style related settings of the renderer.
 	ResetStyle()
 
 	// GetDPI gets the DPI for the renderer.
@@ -35,55 +35,53 @@ type Renderer interface {
 	// SetStrokeDashArray sets the stroke dash array.
 	SetStrokeDashArray(dashArray []float64)
 
-	// MoveTo moves the cursor to a given point.
+	// MoveTo moves the cursor to the specified point.
 	MoveTo(x, y int)
 
-	// LineTo both starts a shape and draws a line to a given point
-	// from the previous point.
+	// LineTo draws a line to the specified point, starting from the previous one.
 	LineTo(x, y int)
 
-	// QuadCurveTo draws a quad curve.
-	// cx and cy represent the bezier "control points".
+	// QuadCurveTo draws a quad curve. `cx` and `cy` are the Bézier control points.
 	QuadCurveTo(cx, cy, x, y int)
 
-	// ArcTo draws an arc with a given center (cx,cy)
-	// a given set of radii (rx,ry), a startAngle and delta (in radians).
+	// ArcTo draws an arc with a given center (`cx`, `cy`), a given set of
+	// radii (`rx`, `ry`), a `startAngle` and `deltaAngle` (in radians).
 	ArcTo(cx, cy int, rx, ry, startAngle, delta float64)
 
-	// Close finalizes a shape as drawn by LineTo.
+	// Close finalizes a shape, closing the path.
 	Close()
 
-	// Stroke strokes the path.
+	// Stroke strokes the current path.
 	Stroke()
 
-	// Fill fills the path, but does not stroke.
+	// Fill fills the current path.
 	Fill()
 
-	// FillStroke fills and strokes a path.
+	// FillStroke fills and strokes the current path.
 	FillStroke()
 
-	// Circle draws a circle at the given coords with a given radius.
+	// Circle draws a circle at the given coordinates, with a given radius.
 	Circle(radius float64, x, y int)
 
-	// SetFont sets a font for a text field.
+	// SetFont sets the current font.
 	SetFont(font Font)
 
-	// SetFontColor sets a font's color
+	// SetFontColor sets the current font color.
 	SetFontColor(color.Color)
 
-	// SetFontSize sets the font size for a text field.
+	// SetFontSize sets the current font size.
 	SetFontSize(size float64)
 
-	// Text draws a text blob.
+	// Text draws a text chunk.
 	Text(body string, x, y int)
 
-	// MeasureText measures text.
+	// MeasureText measures the specified text.
 	MeasureText(body string) Box
 
-	// SetTextRotatation sets a rotation for drawing elements.
+	// SetTextRotation sets the rotation of the text.
 	SetTextRotation(radians float64)
 
-	// ClearTextRotation clears rotation.
+	// ClearTextRotation clears rotation of the text.
 	ClearTextRotation()
 
 	// Save saves the rendered data to the given writer.
