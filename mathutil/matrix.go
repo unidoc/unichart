@@ -521,8 +521,6 @@ func (m *Matrix) QR() (q, r *Matrix) {
 	}
 
 	//Q Matrix:
-	i, j, k = 0, 0, 0
-
 	for k = cols - 1; k >= 0; k-- {
 		q.Set(k, k, 1.0)
 		for j = k; j < cols; j++ {
