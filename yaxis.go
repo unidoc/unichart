@@ -180,6 +180,10 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 
 		tickStyle.WriteToRenderer(r)
 
+		if lx < 0 || ly < 0 {
+			continue
+		}
+
 		r.MoveTo(lx, ly)
 		if ya.AxisType == series.YAxisPrimary {
 			r.LineTo(lx+defaultHorizontalTickWidth, ly)
