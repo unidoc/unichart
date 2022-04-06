@@ -10,6 +10,10 @@ and continuous line charts.
 go get -u github.com/unidoc/unichart
 ```
 
+# Examples
+
+For usage samples, see the [examples](examples) directory.
+
 # License
 
 This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
