@@ -48,8 +48,8 @@ const (
 	defaultHorizontalTickWidth = defaultYAxisMargin >> 1
 
 	// defaultTickCountSanityCheck is a hard limit on number of
-	// ticks to prevent infinite loops.
-	defaultTickCountSanityCheck = 1 << 10 //1024
+	// ticks to prevent infinite loops. Defaults to 1024.
+	defaultTickCountSanityCheck = 1 << 10
 
 	// defaultMinimumTickHorizontalSpacing is the minimum distance
 	// between horizontal ticks.
