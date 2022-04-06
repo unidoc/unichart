@@ -3,7 +3,7 @@ package render
 import (
 	"image/color"
 
-	"github.com/unidoc/unichart/data"
+	"github.com/unidoc/unichart/dataset/sequence"
 )
 
 type (
@@ -11,7 +11,7 @@ type (
 	ColorProvider func(v, vmin, vmax float64) color.Color
 
 	// DotColorProvider is a provider for dot color.
-	DotColorProvider func(xrange, yrange data.Range, index int, x, y float64) color.Color
+	DotColorProvider func(xrange, yrange sequence.Range, index int, x, y float64) color.Color
 )
 
 // Jet is a color map provider based on matlab's jet color map.

@@ -1,7 +1,7 @@
 package chart
 
 import (
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -38,7 +38,7 @@ func Legend(c *Chart, userDefaults ...render.Style) render.Renderable {
 		var lines []render.Style
 		for index, s := range c.Series {
 			if !s.GetStyle().Hidden {
-				if _, isAnnotationSeries := s.(series.AnnotationSeries); !isAnnotationSeries {
+				if _, isAnnotationSeries := s.(dataset.AnnotationSeries); !isAnnotationSeries {
 					labels = append(labels, s.GetName())
 					lines = append(lines, s.GetStyle().InheritFrom(c.styleDefaultsSeries(index)))
 				}
@@ -151,7 +151,7 @@ func LegendThin(c *Chart, userDefaults ...render.Style) render.Renderable {
 		var lines []render.Style
 		for index, s := range c.Series {
 			if !s.GetStyle().Hidden {
-				if _, isAnnotationSeries := s.(series.AnnotationSeries); !isAnnotationSeries {
+				if _, isAnnotationSeries := s.(dataset.AnnotationSeries); !isAnnotationSeries {
 					labels = append(labels, s.GetName())
 					lines = append(lines, s.GetStyle().InheritFrom(c.styleDefaultsSeries(index)))
 				}
@@ -248,7 +248,7 @@ func LegendLeft(c *Chart, userDefaults ...render.Style) render.Renderable {
 		var lines []render.Style
 		for index, s := range c.Series {
 			if !s.GetStyle().Hidden {
-				if _, isAnnotationSeries := s.(series.AnnotationSeries); !isAnnotationSeries {
+				if _, isAnnotationSeries := s.(dataset.AnnotationSeries); !isAnnotationSeries {
 					labels = append(labels, s.GetName())
 					lines = append(lines, s.GetStyle().InheritFrom(c.styleDefaultsSeries(index)))
 				}

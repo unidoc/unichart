@@ -6,7 +6,7 @@ import (
 
 	chart "github.com/unidoc/unichart"
 	unichart "github.com/unidoc/unichart"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/creator"
 )
@@ -48,7 +48,7 @@ func main() {
 		},
 		UseBaseValue: true,
 		BaseValue:    0.0,
-		Bars: []series.Value{
+		Bars: []dataset.Value{
 			{Value: 10.0, Style: profitStyle, Label: "Profit"},
 			{Value: 12.0, Style: profitStyle, Label: "More Profit"},
 			{Value: 8.0, Style: profitStyle, Label: "Still Profit"},

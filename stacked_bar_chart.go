@@ -6,8 +6,8 @@ import (
 	"io"
 	"math"
 
-	"github.com/unidoc/unichart/data/sequence"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -16,7 +16,7 @@ import (
 type StackedBar struct {
 	Name   string
 	Width  int
-	Values []series.Value
+	Values []dataset.Value
 }
 
 // GetWidth returns the width of the bar.
@@ -166,7 +166,7 @@ func (sbc StackedBarChart) drawBar(r render.Renderer, canvasBox render.Box, xoff
 	bxl := xoffset + barSpacing2
 	bxr := bxl + bar.GetWidth()
 
-	normalizedBarComponents := series.Values(bar.Values).Normalize()
+	normalizedBarComponents := dataset.Values(bar.Values).Normalize()
 	yoffset := canvasBox.Top
 	for index, bv := range normalizedBarComponents {
 		barHeight := int(math.Ceil(bv.Value * float64(canvasBox.Height())))
@@ -217,7 +217,7 @@ func (sbc StackedBarChart) drawHorizontalBar(r render.Renderer, canvasBox render
 	boxTop := yoffset + halfBarSpacing
 	boxBottom := boxTop + bar.GetWidth()
 
-	normalizedBarComponents := series.Values(bar.Values).Normalize()
+	normalizedBarComponents := dataset.Values(bar.Values).Normalize()
 
 	xOffset := canvasBox.Right
 	for index, bv := range normalizedBarComponents {

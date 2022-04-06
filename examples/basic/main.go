@@ -4,15 +4,15 @@ import (
 	"log"
 
 	unichart "github.com/unidoc/unichart"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unipdf/v3/creator"
 )
 
 func main() {
 	// Create chart component.
 	chart := &unichart.Chart{
-		Series: []series.Series{
-			series.ContinuousSeries{
+		Series: []dataset.Series{
+			dataset.ContinuousSeries{
 				XValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
 				YValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
 			},

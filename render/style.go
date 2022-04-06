@@ -5,7 +5,7 @@ import (
 	"image/color"
 	"strings"
 
-	"github.com/unidoc/unichart/data"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/mathutil"
 )
 
@@ -33,7 +33,7 @@ var (
 
 type (
 	// SizeProvider is a provider for integer size.
-	SizeProvider func(xrange, yrange data.Range, index int, x, y float64) float64
+	SizeProvider func(xrange, yrange sequence.Range, index int, x, y float64) float64
 )
 
 // Font represents a generic font type.

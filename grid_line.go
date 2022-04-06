@@ -1,7 +1,7 @@
 package chart
 
 import (
-	"github.com/unidoc/unichart/data"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/render"
 )
 
@@ -28,7 +28,7 @@ func (gl GridLine) Minor() bool {
 }
 
 // Render renders the gridline
-func (gl GridLine) Render(r render.Renderer, canvasBox render.Box, ra data.Range, isVertical bool, defaults render.Style) {
+func (gl GridLine) Render(r render.Renderer, canvasBox render.Box, ra sequence.Range, isVertical bool, defaults render.Style) {
 	r.SetStrokeColor(gl.Style.GetStrokeColor(defaults.GetStrokeColor()))
 	r.SetStrokeWidth(gl.Style.GetStrokeWidth(defaults.GetStrokeWidth()))
 	r.SetStrokeDashArray(gl.Style.GetStrokeDashArray(defaults.GetStrokeDashArray()))

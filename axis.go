@@ -1,7 +1,8 @@
 package chart
 
 import (
-	"github.com/unidoc/unichart/data"
+	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/render"
 )
 
@@ -14,15 +15,15 @@ type Axis interface {
 	SetStyle(style render.Style)
 
 	GetTicks() []Tick
-	GenerateTicks(r render.Renderer, ra data.Range, vf data.ValueFormatter) []Tick
+	GenerateTicks(r render.Renderer, ra sequence.Range, vf dataset.ValueFormatter) []Tick
 
 	// GenerateGridLines returns the gridlines for the axis.
 	GetGridLines(ticks []Tick) []GridLine
 
 	// Measure should return an absolute box for the axis.
 	// This is used when auto-fitting the canvas to the background.
-	Measure(r render.Renderer, canvasBox render.Box, ra data.Range, style render.Style, ticks []Tick) render.Box
+	Measure(r render.Renderer, canvasBox render.Box, ra sequence.Range, style render.Style, ticks []Tick) render.Box
 
 	// Render renders the axis.
-	Render(r render.Renderer, canvasBox render.Box, ra data.Range, style render.Style, ticks []Tick)
+	Render(r render.Renderer, canvasBox render.Box, ra sequence.Range, style render.Style, ticks []Tick)
 }

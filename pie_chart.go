@@ -6,7 +6,7 @@ import (
 	"io"
 	"math"
 
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -22,7 +22,7 @@ type PieChart struct {
 	SliceStyle   render.Style
 	ColorPalette render.ColorPalette
 
-	Values   []series.Value
+	Values   []dataset.Value
 	Elements []render.Renderable
 
 	width  int
@@ -125,7 +125,7 @@ func (pc *PieChart) drawTitle(r render.Renderer) {
 	}
 }
 
-func (pc *PieChart) drawSlices(r render.Renderer, canvasBox render.Box, values []series.Value) {
+func (pc *PieChart) drawSlices(r render.Renderer, canvasBox render.Box, values []dataset.Value) {
 	cx, cy := canvasBox.Center()
 	diameter := mathutil.MinInt(canvasBox.Width(), canvasBox.Height())
 	radius := float64(diameter >> 1)
@@ -183,8 +183,8 @@ func (pc *PieChart) drawSlices(r render.Renderer, canvasBox render.Box, values [
 	}
 }
 
-func (pc *PieChart) finalizeValues(values []series.Value) ([]series.Value, error) {
-	finalValues := series.Values(values).Normalize()
+func (pc *PieChart) finalizeValues(values []dataset.Value) ([]dataset.Value, error) {
+	finalValues := dataset.Values(values).Normalize()
 	if len(finalValues) == 0 {
 		return nil, fmt.Errorf("pie chart must contain at least (1) non-zero value")
 	}

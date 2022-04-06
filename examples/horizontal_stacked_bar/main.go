@@ -5,7 +5,7 @@ import (
 	"log"
 
 	unichart "github.com/unidoc/unichart"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/creator"
 )
@@ -33,7 +33,7 @@ func main() {
 			{
 				Name:  "Q1",
 				Width: barWidth,
-				Values: []series.Value{
+				Values: []dataset.Value{
 					{
 						Label: "32K",
 						Value: 32,
@@ -75,7 +75,7 @@ func main() {
 			{
 				Name:  "Q2",
 				Width: barWidth,
-				Values: []series.Value{
+				Values: []dataset.Value{
 					{
 						Label: "45K",
 						Value: 45,
@@ -117,7 +117,7 @@ func main() {
 			{
 				Name:  "Q3",
 				Width: barWidth,
-				Values: []series.Value{
+				Values: []dataset.Value{
 					{
 						Label: "54K",
 						Value: 54,
@@ -159,7 +159,7 @@ func main() {
 			{
 				Name:  "Q4",
 				Width: barWidth,
-				Values: []series.Value{
+				Values: []dataset.Value{
 					{
 						Label: "46K",
 						Value: 46,

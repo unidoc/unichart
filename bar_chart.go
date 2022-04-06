@@ -6,8 +6,8 @@ import (
 	"io"
 	"math"
 
-	"github.com/unidoc/unichart/data"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -31,7 +31,7 @@ type BarChart struct {
 	UseBaseValue bool
 	BaseValue    float64
 
-	Bars     []series.Value
+	Bars     []dataset.Value
 	Elements []render.Renderable
 
 	width  int
@@ -115,8 +115,8 @@ func (bc *BarChart) Render(rp render.RendererProvider, w io.Writer) error {
 
 	var canvasBox render.Box
 	var yt []Tick
-	var yr data.Range
-	var yf data.ValueFormatter
+	var yr sequence.Range
+	var yf dataset.ValueFormatter
 
 	canvasBox = bc.getDefaultCanvasBox()
 	yr = bc.getRanges()
@@ -148,12 +148,12 @@ func (bc *BarChart) drawCanvas(r render.Renderer, canvasBox render.Box) {
 	canvasBox.Draw(r, bc.getCanvasStyle())
 }
 
-func (bc *BarChart) getRanges() data.Range {
-	var yrange data.Range
+func (bc *BarChart) getRanges() sequence.Range {
+	var yrange sequence.Range
 	if bc.YAxis.Range != nil && !bc.YAxis.Range.IsZero() {
 		yrange = bc.YAxis.Range
 	} else {
-		yrange = &data.ContinuousRange{}
+		yrange = &sequence.ContinuousRange{}
 	}
 
 	if !yrange.IsZero() {
@@ -190,7 +190,7 @@ func (bc *BarChart) drawBackground(r render.Renderer) {
 	}.Draw(r, bc.getBackgroundStyle())
 }
 
-func (bc *BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr data.Range) {
+func (bc *BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr sequence.Range) {
 	xoffset := canvasBox.Left
 
 	width, spacing, _ := bc.calculateScaledTotalWidth(canvasBox)
@@ -264,7 +264,7 @@ func (bc *BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 	}
 }
 
-func (bc *BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr data.Range, ticks []Tick) {
+func (bc *BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr sequence.Range, ticks []Tick) {
 	if !bc.YAxis.Style.Hidden {
 		axisStyle := bc.YAxis.Style.InheritFrom(bc.styleDefaultsAxes())
 		axisStyle.WriteToRenderer(r)
@@ -330,7 +330,7 @@ func (bc *BarChart) hasAxes() bool {
 	return !bc.YAxis.Style.Hidden
 }
 
-func (bc *BarChart) setRangeDomains(canvasBox render.Box, yr data.Range) data.Range {
+func (bc *BarChart) setRangeDomains(canvasBox render.Box, yr sequence.Range) sequence.Range {
 	yr.SetDomain(canvasBox.Height())
 	return yr
 }
@@ -339,14 +339,14 @@ func (bc *BarChart) getDefaultCanvasBox() render.Box {
 	return bc.box()
 }
 
-func (bc *BarChart) getValueFormatters() data.ValueFormatter {
+func (bc *BarChart) getValueFormatters() dataset.ValueFormatter {
 	if bc.YAxis.ValueFormatter != nil {
 		return bc.YAxis.ValueFormatter
 	}
-	return data.FloatValueFormatter
+	return dataset.FloatValueFormatter
 }
 
-func (bc *BarChart) getAxesTicks(r render.Renderer, yr data.Range, yf data.ValueFormatter) (yticks []Tick) {
+func (bc *BarChart) getAxesTicks(r render.Renderer, yr sequence.Range, yf dataset.ValueFormatter) (yticks []Tick) {
 	if !bc.YAxis.Style.Hidden {
 		yticks = bc.YAxis.GetTicks(r, yr, bc.styleDefaultsAxes(), yf)
 	}
@@ -388,7 +388,7 @@ func (bc *BarChart) calculateScaledTotalWidth(canvasBox render.Box) (width, spac
 	return
 }
 
-func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, yrange data.Range, yticks []Tick) render.Box {
+func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, yrange sequence.Range, yticks []Tick) render.Box {
 	axesOuterBox := canvasBox.Clone()
 
 	_, _, totalWidth := bc.calculateScaledTotalWidth(canvasBox)

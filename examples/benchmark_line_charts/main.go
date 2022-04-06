@@ -7,7 +7,7 @@ import (
 	"time"
 
 	unichart "github.com/unidoc/unichart"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unipdf/v3/creator"
 )
 
@@ -19,7 +19,7 @@ func main() {
 	// Create chart component.
 	numValues := 1024
 	numSeries := 100
-	timeSeries := make([]series.Series, numSeries)
+	timeSeries := make([]dataset.Series, numSeries)
 
 	for i := 0; i < numSeries; i++ {
 		xValues := make([]time.Time, numValues)
@@ -30,7 +30,7 @@ func main() {
 			yValues[j] = random(float64(-500), float64(500))
 		}
 
-		timeSeries[i] = series.TimeSeries{
+		timeSeries[i] = dataset.TimeSeries{
 			Name:    fmt.Sprintf("aaa.bbb.hostname-%v.ccc.ddd.eee.fff.ggg.hhh.iii.jjj.kkk.lll.mmm.nnn.value", i),
 			XValues: xValues,
 			YValues: yValues,

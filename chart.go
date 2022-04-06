@@ -6,8 +6,8 @@ import (
 	"io"
 	"math"
 
-	"github.com/unidoc/unichart/data"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -26,7 +26,7 @@ type Chart struct {
 	YAxis          YAxis
 	YAxisSecondary YAxis
 
-	Series   []series.Series
+	Series   []dataset.Series
 	Elements []render.Renderable
 
 	width  int
@@ -90,7 +90,7 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 		return err
 	}
 
-	c.YAxisSecondary.AxisType = series.YAxisSecondary
+	c.YAxisSecondary.AxisType = dataset.YAxisSecondary
 
 	r, err := rp(c.Width(), c.Height())
 	if err != nil {
@@ -166,7 +166,7 @@ func (c *Chart) validateSeries() error {
 	return nil
 }
 
-func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
+func (c *Chart) getRanges() (xrange, yrange, yrangeAlt sequence.Range) {
 	var minx, maxx float64 = math.MaxFloat64, -math.MaxFloat64
 	var miny, maxy float64 = math.MaxFloat64, -math.MaxFloat64
 	var minya, maxya float64 = math.MaxFloat64, -math.MaxFloat64
@@ -178,7 +178,7 @@ func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 	for _, s := range c.Series {
 		if !s.GetStyle().Hidden {
 			seriesAxis := s.GetYAxis()
-			if bvp, isBoundedValuesProvider := s.(data.BoundedValuesProvider); isBoundedValuesProvider {
+			if bvp, isBoundedValuesProvider := s.(dataset.BoundedValuesProvider); isBoundedValuesProvider {
 				seriesLength := bvp.Len()
 				for index := 0; index < seriesLength; index++ {
 					vx, vy1, vy2 := bvp.GetBoundedValues(index)
@@ -186,12 +186,12 @@ func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 					minx = math.Min(minx, vx)
 					maxx = math.Max(maxx, vx)
 
-					if seriesAxis == series.YAxisPrimary {
+					if seriesAxis == dataset.YAxisPrimary {
 						miny = math.Min(miny, vy1)
 						miny = math.Min(miny, vy2)
 						maxy = math.Max(maxy, vy1)
 						maxy = math.Max(maxy, vy2)
-					} else if seriesAxis == series.YAxisSecondary {
+					} else if seriesAxis == dataset.YAxisSecondary {
 						minya = math.Min(minya, vy1)
 						minya = math.Min(minya, vy2)
 						maxya = math.Max(maxya, vy1)
@@ -199,7 +199,7 @@ func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 						seriesMappedToSecondaryAxis = true
 					}
 				}
-			} else if vp, isValuesProvider := s.(data.ValuesProvider); isValuesProvider {
+			} else if vp, isValuesProvider := s.(dataset.ValuesProvider); isValuesProvider {
 				seriesLength := vp.Len()
 				for index := 0; index < seriesLength; index++ {
 					vx, vy := vp.GetValues(index)
@@ -207,10 +207,10 @@ func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 					minx = math.Min(minx, vx)
 					maxx = math.Max(maxx, vx)
 
-					if seriesAxis == series.YAxisPrimary {
+					if seriesAxis == dataset.YAxisPrimary {
 						miny = math.Min(miny, vy)
 						maxy = math.Max(maxy, vy)
-					} else if seriesAxis == series.YAxisSecondary {
+					} else if seriesAxis == dataset.YAxisSecondary {
 						minya = math.Min(minya, vy)
 						maxya = math.Max(maxya, vy)
 						seriesMappedToSecondaryAxis = true
@@ -221,19 +221,19 @@ func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 	}
 
 	if c.XAxis.Range == nil {
-		xrange = &data.ContinuousRange{}
+		xrange = &sequence.ContinuousRange{}
 	} else {
 		xrange = c.XAxis.Range
 	}
 
 	if c.YAxis.Range == nil {
-		yrange = &data.ContinuousRange{}
+		yrange = &sequence.ContinuousRange{}
 	} else {
 		yrange = c.YAxis.Range
 	}
 
 	if c.YAxisSecondary.Range == nil {
-		yrangeAlt = &data.ContinuousRange{}
+		yrangeAlt = &sequence.ContinuousRange{}
 	} else {
 		yrangeAlt = c.YAxisSecondary.Range
 	}
@@ -297,7 +297,7 @@ func (c *Chart) getRanges() (xrange, yrange, yrangeAlt data.Range) {
 	return
 }
 
-func (c *Chart) checkRanges(xr, yr, yra data.Range) error {
+func (c *Chart) checkRanges(xr, yr, yra sequence.Range) error {
 	xDelta := xr.GetDelta()
 	if math.IsInf(xDelta, 0) {
 		return errors.New("infinite x-range delta")
@@ -334,14 +334,14 @@ func (c *Chart) getDefaultCanvasBox() render.Box {
 	return c.Box()
 }
 
-func (c *Chart) getValueFormatters() (x, y, ya data.ValueFormatter) {
+func (c *Chart) getValueFormatters() (x, y, ya dataset.ValueFormatter) {
 	for _, s := range c.Series {
-		if vfp, isVfp := s.(data.ValueFormatterProvider); isVfp {
+		if vfp, isVfp := s.(dataset.ValueFormatterProvider); isVfp {
 			sx, sy := vfp.GetValueFormatters()
-			if s.GetYAxis() == series.YAxisPrimary {
+			if s.GetYAxis() == dataset.YAxisPrimary {
 				x = sx
 				y = sy
-			} else if s.GetYAxis() == series.YAxisSecondary {
+			} else if s.GetYAxis() == dataset.YAxisSecondary {
 				x = sx
 				ya = sy
 			}
@@ -363,7 +363,7 @@ func (c *Chart) hasAxes() bool {
 	return !c.XAxis.Style.Hidden || !c.YAxis.Style.Hidden || !c.YAxisSecondary.Style.Hidden
 }
 
-func (c *Chart) getAxesTicks(r render.Renderer, xr, yr, yar data.Range, xf, yf, yfa data.ValueFormatter) (xticks, yticks, yticksAlt []Tick) {
+func (c *Chart) getAxesTicks(r render.Renderer, xr, yr, yar sequence.Range, xf, yf, yfa dataset.ValueFormatter) (xticks, yticks, yticksAlt []Tick) {
 	if !c.XAxis.Style.Hidden {
 		xticks = c.XAxis.GetTicks(r, xr, c.styleDefaultsAxes(), xf)
 	}
@@ -376,7 +376,7 @@ func (c *Chart) getAxesTicks(r render.Renderer, xr, yr, yar data.Range, xf, yf, 
 	return
 }
 
-func (c *Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra data.Range, xticks, yticks, yticksAlt []Tick) render.Box {
+func (c *Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra sequence.Range, xticks, yticks, yticksAlt []Tick) render.Box {
 	axesOuterBox := canvasBox.Clone()
 	if !c.XAxis.Style.Hidden {
 		axesBounds := c.XAxis.Measure(r, canvasBox, xr, c.styleDefaultsAxes(), xticks)
@@ -394,7 +394,7 @@ func (c *Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 	return canvasBox.OuterConstrain(c.Box(), axesOuterBox)
 }
 
-func (c *Chart) setRangeDomains(canvasBox render.Box, xr, yr, yra data.Range) (data.Range, data.Range, data.Range) {
+func (c *Chart) setRangeDomains(canvasBox render.Box, xr, yr, yra sequence.Range) (sequence.Range, sequence.Range, sequence.Range) {
 	xr.SetDomain(canvasBox.Width())
 	yr.SetDomain(canvasBox.Height())
 	yra.SetDomain(canvasBox.Height())
@@ -403,7 +403,7 @@ func (c *Chart) setRangeDomains(canvasBox render.Box, xr, yr, yra data.Range) (d
 
 func (c *Chart) hasAnnotationSeries() bool {
 	for _, s := range c.Series {
-		if as, isAnnotationSeries := s.(series.AnnotationSeries); isAnnotationSeries {
+		if as, isAnnotationSeries := s.(dataset.AnnotationSeries); isAnnotationSeries {
 			if !as.GetStyle().Hidden {
 				return true
 			}
@@ -414,23 +414,23 @@ func (c *Chart) hasAnnotationSeries() bool {
 
 func (c *Chart) hasSecondarySeries() bool {
 	for _, s := range c.Series {
-		if s.GetYAxis() == series.YAxisSecondary {
+		if s.GetYAxis() == dataset.YAxisSecondary {
 			return true
 		}
 	}
 	return false
 }
 
-func (c *Chart) getAnnotationAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra data.Range, xf, yf, yfa data.ValueFormatter) render.Box {
+func (c *Chart) getAnnotationAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, xr, yr, yra sequence.Range, xf, yf, yfa dataset.ValueFormatter) render.Box {
 	annotationSeriesBox := canvasBox.Clone()
 	for seriesIndex, s := range c.Series {
-		if as, isAnnotationSeries := s.(series.AnnotationSeries); isAnnotationSeries {
+		if as, isAnnotationSeries := s.(dataset.AnnotationSeries); isAnnotationSeries {
 			if !as.GetStyle().Hidden {
 				style := c.styleDefaultsSeries(seriesIndex)
 				var annotationBounds render.Box
-				if as.YAxis == series.YAxisPrimary {
+				if as.YAxis == dataset.YAxisPrimary {
 					annotationBounds = as.Measure(r, canvasBox, xr, yr, style)
-				} else if as.YAxis == series.YAxisSecondary {
+				} else if as.YAxis == dataset.YAxisSecondary {
 					annotationBounds = as.Measure(r, canvasBox, xr, yra, style)
 				}
 
@@ -461,7 +461,7 @@ func (c *Chart) drawCanvas(r render.Renderer, canvasBox render.Box) {
 	canvasBox.Draw(r, c.getCanvasStyle())
 }
 
-func (c *Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt data.Range, xticks, yticks, yticksAlt []Tick) {
+func (c *Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt sequence.Range, xticks, yticks, yticksAlt []Tick) {
 	if !c.XAxis.Style.Hidden {
 		c.XAxis.Render(r, canvasBox, xrange, c.styleDefaultsAxes(), xticks)
 	}
@@ -473,11 +473,11 @@ func (c *Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange
 	}
 }
 
-func (c *Chart) drawSeries(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt data.Range, s series.Series, seriesIndex int) {
+func (c *Chart) drawSeries(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt sequence.Range, s dataset.Series, seriesIndex int) {
 	if !s.GetStyle().Hidden {
-		if s.GetYAxis() == series.YAxisPrimary {
+		if s.GetYAxis() == dataset.YAxisPrimary {
 			s.Render(r, canvasBox, xrange, yrange, c.styleDefaultsSeries(seriesIndex))
-		} else if s.GetYAxis() == series.YAxisSecondary {
+		} else if s.GetYAxis() == dataset.YAxisSecondary {
 			s.Render(r, canvasBox, xrange, yrangeAlt, c.styleDefaultsSeries(seriesIndex))
 		}
 	}

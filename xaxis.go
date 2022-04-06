@@ -3,7 +3,8 @@ package chart
 import (
 	"math"
 
-	"github.com/unidoc/unichart/data"
+	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -14,8 +15,8 @@ type XAxis struct {
 	NameStyle render.Style
 
 	Style          render.Style
-	ValueFormatter data.ValueFormatter
-	Range          data.Range
+	ValueFormatter dataset.ValueFormatter
+	Range          sequence.Range
 
 	TickStyle    render.Style
 	Ticks        []Tick
@@ -37,11 +38,11 @@ func (xa XAxis) GetStyle() render.Style {
 }
 
 // GetValueFormatter returns the value formatter for the axis.
-func (xa XAxis) GetValueFormatter() data.ValueFormatter {
+func (xa XAxis) GetValueFormatter() dataset.ValueFormatter {
 	if xa.ValueFormatter != nil {
 		return xa.ValueFormatter
 	}
-	return data.FloatValueFormatter
+	return dataset.FloatValueFormatter
 }
 
 // GetTickPosition returns the tick position option for the axis.
@@ -60,7 +61,7 @@ func (xa XAxis) GetTickPosition(defaults ...TickPosition) TickPosition {
 // 	- User Supplied Ticks (i.e. Ticks array on the axis itself).
 // 	- Range ticks (i.e. if the range provides ticks).
 //	- Generating continuous ticks based on minimum spacing and canvas width.
-func (xa XAxis) GetTicks(r render.Renderer, ra data.Range, defaults render.Style, vf data.ValueFormatter) []Tick {
+func (xa XAxis) GetTicks(r render.Renderer, ra sequence.Range, defaults render.Style, vf dataset.ValueFormatter) []Tick {
 	if len(xa.Ticks) > 0 {
 		return xa.Ticks
 	}
@@ -81,7 +82,7 @@ func (xa XAxis) GetGridLines(ticks []Tick) []GridLine {
 }
 
 // Measure returns the bounds of the axis.
-func (xa XAxis) Measure(r render.Renderer, canvasBox render.Box, ra data.Range, defaults render.Style, ticks []Tick) render.Box {
+func (xa XAxis) Measure(r render.Renderer, canvasBox render.Box, ra sequence.Range, defaults render.Style, ticks []Tick) render.Box {
 	tickStyle := xa.TickStyle.InheritFrom(xa.Style.InheritFrom(defaults))
 
 	tp := xa.GetTickPosition()
@@ -127,7 +128,7 @@ func (xa XAxis) Measure(r render.Renderer, canvasBox render.Box, ra data.Range, 
 }
 
 // Render renders the axis
-func (xa XAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, defaults render.Style, ticks []Tick) {
+func (xa XAxis) Render(r render.Renderer, canvasBox render.Box, ra sequence.Range, defaults render.Style, ticks []Tick) {
 	tickStyle := xa.TickStyle.InheritFrom(xa.Style.InheritFrom(defaults))
 
 	tickStyle.GetStrokeOptions().WriteToRenderer(r)

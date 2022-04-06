@@ -5,7 +5,7 @@ import (
 	"log"
 
 	unichart "github.com/unidoc/unichart"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/creator"
 )
@@ -19,8 +19,8 @@ func main() {
 		YAxis: unichart.YAxis{
 			Name: "The YAxis",
 		},
-		Series: []series.Series{
-			series.ContinuousSeries{
+		Series: []dataset.Series{
+			dataset.ContinuousSeries{
 				Style: render.Style{
 					StrokeColor: color.RGBA{R: 0, G: 116, B: 217, A: 255},
 					FillColor:   color.RGBA{R: 106, G: 195, B: 203, A: 255},

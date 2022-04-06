@@ -6,7 +6,7 @@ import (
 	"time"
 
 	unichart "github.com/unidoc/unichart"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unipdf/v3/creator"
 )
 
@@ -20,13 +20,13 @@ func main() {
 				return fmt.Sprintf("%d-%d\n%d", typedDate.Month(), typedDate.Day(), typedDate.Year())
 			},
 		},
-		Series: []series.Series{
-			series.ContinuousSeries{
+		Series: []dataset.Series{
+			dataset.ContinuousSeries{
 				XValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
 				YValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
 			},
-			series.ContinuousSeries{
-				YAxis:   series.YAxisSecondary,
+			dataset.ContinuousSeries{
+				YAxis:   dataset.YAxisSecondary,
 				XValues: []float64{1.0, 2.0, 3.0, 4.0, 5.0},
 				YValues: []float64{50.0, 40.0, 30.0, 20.0, 10.0},
 			},

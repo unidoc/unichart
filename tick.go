@@ -3,7 +3,8 @@ package chart
 import (
 	"math"
 
-	"github.com/unidoc/unichart/data"
+	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -24,7 +25,7 @@ const (
 
 // TicksProvider is a type that provides ticks.
 type TicksProvider interface {
-	GetTicks(r render.Renderer, defaults render.Style, vf data.ValueFormatter) []Tick
+	GetTicks(r render.Renderer, defaults render.Style, vf dataset.ValueFormatter) []Tick
 }
 
 // Tick represents a label on an axis.
@@ -34,9 +35,9 @@ type Tick struct {
 }
 
 // generateContinuousTicks generates a set of ticks.
-func generateContinuousTicks(r render.Renderer, ra data.Range, isVertical bool, style render.Style, vf data.ValueFormatter) []Tick {
+func generateContinuousTicks(r render.Renderer, ra sequence.Range, isVertical bool, style render.Style, vf dataset.ValueFormatter) []Tick {
 	if vf == nil {
-		vf = data.FloatValueFormatter
+		vf = dataset.FloatValueFormatter
 	}
 
 	var ticks []Tick

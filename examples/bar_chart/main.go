@@ -4,7 +4,7 @@ import (
 	"log"
 
 	unichart "github.com/unidoc/unichart"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/creator"
 )
@@ -19,7 +19,7 @@ func main() {
 			},
 		},
 		BarWidth: 40,
-		Bars: []series.Value{
+		Bars: []dataset.Value{
 			{Value: 5.25, Label: "Blue"},
 			{Value: 4.88, Label: "Green"},
 			{Value: 4.74, Label: "Gray"},

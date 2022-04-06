@@ -3,8 +3,8 @@ package chart
 import (
 	"math"
 
-	"github.com/unidoc/unichart/data"
-	"github.com/unidoc/unichart/data/series"
+	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
 )
@@ -17,11 +17,11 @@ type YAxis struct {
 	Style     render.Style
 
 	Zero      GridLine
-	AxisType  series.YAxisType
+	AxisType  dataset.YAxisType
 	Ascending bool
 
-	ValueFormatter data.ValueFormatter
-	Range          data.Range
+	ValueFormatter dataset.ValueFormatter
+	Range          sequence.Range
 
 	TickStyle render.Style
 	Ticks     []Tick
@@ -47,11 +47,11 @@ func (ya YAxis) GetStyle() render.Style {
 }
 
 // GetValueFormatter returns the value formatter for the axis.
-func (ya YAxis) GetValueFormatter() data.ValueFormatter {
+func (ya YAxis) GetValueFormatter() dataset.ValueFormatter {
 	if ya.ValueFormatter != nil {
 		return ya.ValueFormatter
 	}
-	return data.FloatValueFormatter
+	return dataset.FloatValueFormatter
 }
 
 // GetTickStyle returns the tick style.
@@ -64,7 +64,7 @@ func (ya YAxis) GetTickStyle() render.Style {
 // 	- User Supplied Ticks (i.e. Ticks array on the axis itself).
 // 	- Range ticks (i.e. if the range provides ticks).
 //	- Generating continuous ticks based on minimum spacing and canvas width.
-func (ya YAxis) GetTicks(r render.Renderer, ra data.Range, defaults render.Style, vf data.ValueFormatter) []Tick {
+func (ya YAxis) GetTicks(r render.Renderer, ra sequence.Range, defaults render.Style, vf dataset.ValueFormatter) []Tick {
 	if len(ya.Ticks) > 0 {
 		return ya.Ticks
 	}
@@ -85,11 +85,11 @@ func (ya YAxis) GetGridLines(ticks []Tick) []GridLine {
 }
 
 // Measure returns the bounds of the axis.
-func (ya YAxis) Measure(r render.Renderer, canvasBox render.Box, ra data.Range, defaults render.Style, ticks []Tick) render.Box {
+func (ya YAxis) Measure(r render.Renderer, canvasBox render.Box, ra sequence.Range, defaults render.Style, ticks []Tick) render.Box {
 	var tx int
-	if ya.AxisType == series.YAxisPrimary {
+	if ya.AxisType == dataset.YAxisPrimary {
 		tx = canvasBox.Right + defaultYAxisMargin
-	} else if ya.AxisType == series.YAxisSecondary {
+	} else if ya.AxisType == dataset.YAxisSecondary {
 		tx = canvasBox.Left - defaultYAxisMargin
 	}
 
@@ -103,16 +103,16 @@ func (ya YAxis) Measure(r render.Renderer, canvasBox render.Box, ra data.Range, 
 		tb := r.MeasureText(t.Label)
 		tbh2 := tb.Height() >> 1
 		finalTextX := tx
-		if ya.AxisType == series.YAxisSecondary {
+		if ya.AxisType == dataset.YAxisSecondary {
 			finalTextX = tx - tb.Width()
 		}
 
 		maxTextHeight = mathutil.MaxInt(tb.Height(), maxTextHeight)
 
-		if ya.AxisType == series.YAxisPrimary {
+		if ya.AxisType == dataset.YAxisPrimary {
 			minx = canvasBox.Right
 			maxx = mathutil.MaxInt(maxx, tx+tb.Width())
-		} else if ya.AxisType == series.YAxisSecondary {
+		} else if ya.AxisType == dataset.YAxisSecondary {
 			minx = mathutil.MinInt(minx, finalTextX)
 			maxx = mathutil.MaxInt(maxx, tx)
 		}
@@ -134,7 +134,7 @@ func (ya YAxis) Measure(r render.Renderer, canvasBox render.Box, ra data.Range, 
 }
 
 // Render renders the axis.
-func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, defaults render.Style, ticks []Tick) {
+func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra sequence.Range, defaults render.Style, ticks []Tick) {
 	tickStyle := ya.TickStyle.InheritFrom(ya.Style.InheritFrom(defaults))
 	tickStyle.WriteToRenderer(r)
 
@@ -142,10 +142,10 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 
 	var lx int
 	var tx int
-	if ya.AxisType == series.YAxisPrimary {
+	if ya.AxisType == dataset.YAxisPrimary {
 		lx = canvasBox.Right + int(sw)
 		tx = lx + defaultYAxisMargin
-	} else if ya.AxisType == series.YAxisSecondary {
+	} else if ya.AxisType == dataset.YAxisSecondary {
 		lx = canvasBox.Left - int(sw)
 		tx = lx - defaultYAxisMargin
 	}
@@ -166,7 +166,7 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 			maxTextWidth = tb.Width()
 		}
 
-		if ya.AxisType == series.YAxisSecondary {
+		if ya.AxisType == dataset.YAxisSecondary {
 			finalTextX = tx - tb.Width()
 		} else {
 			finalTextX = tx
@@ -185,9 +185,9 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 		}
 
 		r.MoveTo(lx, ly)
-		if ya.AxisType == series.YAxisPrimary {
+		if ya.AxisType == dataset.YAxisPrimary {
 			r.LineTo(lx+defaultHorizontalTickWidth, ly)
-		} else if ya.AxisType == series.YAxisSecondary {
+		} else if ya.AxisType == dataset.YAxisSecondary {
 			r.LineTo(lx-defaultHorizontalTickWidth, ly)
 		}
 		r.Stroke()
@@ -201,9 +201,9 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra data.Range, d
 		tb := render.Text.Measure(r, ya.Name, nameStyle)
 
 		var tx int
-		if ya.AxisType == series.YAxisPrimary {
+		if ya.AxisType == dataset.YAxisPrimary {
 			tx = canvasBox.Right + int(sw) + defaultYAxisMargin + maxTextWidth + defaultYAxisMargin
-		} else if ya.AxisType == series.YAxisSecondary {
+		} else if ya.AxisType == dataset.YAxisSecondary {
 			tx = canvasBox.Left - (defaultYAxisMargin + int(sw) + maxTextWidth + defaultYAxisMargin)
 		}
 
