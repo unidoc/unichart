@@ -14,7 +14,7 @@ go get -u github.com/unidoc/unichart
 
 # Examples
 
-For usage samples, see the [examples](examples) directory.
+For usage and output samples, see the [examples](examples) directory.
 
 # Supported chart types
 
