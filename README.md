@@ -14,7 +14,27 @@ go get -u github.com/unidoc/unichart
 
 For usage samples, see the [examples](examples) directory.
 
+# Supported chart types
+
+### Line chart
+
 ![Sample chart output](examples/request_timing/preview.png)
+
+### Bar chart
+
+![Sample bar chart output](examples/bar_chart/preview.png)
+
+### Stacked bar chart
+
+![Sample stacked bar chart output](examples/stacked_bar/preview.png)
+
+### Pie chart
+
+![Sample pie chart output](examples/pie_chart/preview.png)
+
+### Donut chart
+
+![Sample donut chart output](examples/donut_chart/preview.png)
 
 # License
 
