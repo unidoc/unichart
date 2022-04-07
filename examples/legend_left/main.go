@@ -93,6 +93,6 @@ func main() {
 
 	// Save output file.
 	if err := c.WriteToFile("output.pdf"); err != nil {
-		log.Fatalf("failed to write pdf: %v", err)
+		log.Fatalf("failed to write output file: %v", err)
 	}
 }
