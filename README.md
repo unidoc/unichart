@@ -1,8 +1,9 @@
 unichart
 ========
 
-unichart is a native Golang charting library that supports timeseries
-and continuous line charts.
+unichart is a native Golang charting library. Its primary purpose is to
+integrate with [unipdf](https://github.com/unidoc/unipdf) and other products in
+the UniDoc ecosystem in order to provide charting capabilities.
 
 # Installation
 
