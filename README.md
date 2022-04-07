@@ -2,7 +2,7 @@ unichart
 ========
 
 unichart is a native Golang charting library. Its primary purpose is to
-integrate with [unipdf](https://github.com/unidoc/unipdf) and other products
+integrate with [UniPDF](https://github.com/unidoc/unipdf) and other products
 in the [UniDoc](https://unidoc.io/) ecosystem in order to provide charting
 capabilities.
 
@@ -43,7 +43,7 @@ For usage samples, see the [examples](examples) directory.
 This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
 See [LICENSE](LICENSE) for more details.
 
-A commercial license is required in order to use this project with [unipdf](https://github.com/unidoc/unipdf).
+A commercial license is required in order to use this project with [UniPDF](https://github.com/unidoc/unipdf).
 There are two options:
 
 - Metered License API keys.
