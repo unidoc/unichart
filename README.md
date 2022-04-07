@@ -14,6 +14,8 @@ go get -u github.com/unidoc/unichart
 
 For usage samples, see the [examples](examples) directory.
 
+![Sample chart output](examples/request_timing/preview.png)
+
 # License
 
 This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
