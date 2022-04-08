@@ -100,8 +100,8 @@ func (b Box) Center() (x, y int) {
 	return b.Left + w2, b.Top + h2
 }
 
-// Aspect returns the aspect ratio of the box.
-func (b Box) Aspect() float64 {
+// AspectRatio returns the aspect ratio of the box.
+func (b Box) AspectRatio() float64 {
 	return float64(b.Width()) / float64(b.Height())
 }
 
@@ -173,8 +173,8 @@ func (b Box) Corners() BoxCorners {
 // Fit is functionally the inverse of grow. Fit maintains the original aspect
 // ratio of the `other` box, but constrains it to the bounds of the target box.
 func (b Box) Fit(other Box) Box {
-	ba := b.Aspect()
-	oa := other.Aspect()
+	ba := b.AspectRatio()
+	oa := other.AspectRatio()
 
 	if oa == ba {
 		return b.Clone()
