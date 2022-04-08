@@ -137,7 +137,7 @@ func (m *Matrix) Each(action func(row, col int, value float64)) {
 }
 
 // Round rounds all the values in a matrix to its epsilon,
-// returning a reference to the original
+// returning a reference to the original.
 func (m *Matrix) Round() *Matrix {
 	rows, cols := m.Size()
 	for row := 0; row < rows; row++ {

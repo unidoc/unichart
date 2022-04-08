@@ -149,7 +149,7 @@ func (w Wrapper) Sort() Wrapper {
 	return Wrapper{ArraySequence(values)}
 }
 
-// Reverse reverses the sequence
+// Reverse reverses the sequence.
 func (w Wrapper) Reverse() Wrapper {
 	if w.Len() == 0 {
 		return w
@@ -235,8 +235,8 @@ func (w Wrapper) StdDev() float64 {
 	return math.Pow(w.Variance(), 0.5)
 }
 
-//Percentile finds the relative standing in a slice of floats.
-// `percent` should be given on the interval [0,1.0).
+// Percentile finds the relative standing in a slice of floats.
+// `percent` needs to be specified in the [0,1.0) interval.
 func (w Wrapper) Percentile(percent float64) (percentile float64) {
 	l := w.Len()
 	if l == 0 {

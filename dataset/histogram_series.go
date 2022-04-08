@@ -78,7 +78,7 @@ func drawHistogramSeries(r render.Renderer, canvasBox render.Box, xrange, yrange
 		return
 	}
 
-	//calculate bar width?
+	// Calculate bar width.
 	seriesLength := vs.Len()
 	barWidth := int(math.Floor(float64(xrange.GetDomain()) / float64(seriesLength)))
 	if len(barWidths) > 0 {
@@ -88,7 +88,7 @@ func drawHistogramSeries(r render.Renderer, canvasBox render.Box, xrange, yrange
 	cb := canvasBox.Bottom
 	cl := canvasBox.Left
 
-	//foreach datapoint, draw a box.
+	// Draw a box for each datapoint.
 	for index := 0; index < seriesLength; index++ {
 		vx, vy := vs.GetValues(index)
 		y0 := yrange.Translate(0)
