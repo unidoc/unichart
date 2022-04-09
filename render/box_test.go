@@ -72,12 +72,12 @@ func TestBoxFit(t *testing.T) {
 	require.Equal(t, a.Right, fab.Right)
 	require.True(t, fab.Top < fab.Bottom)
 	require.True(t, fab.Left < fab.Right)
-	require.True(t, math.Abs(b.Aspect()-fab.Aspect()) < 0.02)
+	require.True(t, math.Abs(b.AspectRatio()-fab.AspectRatio()) < 0.02)
 
 	fac := a.Fit(c)
 	require.Equal(t, a.Top, fac.Top)
 	require.Equal(t, a.Bottom, fac.Bottom)
-	require.True(t, math.Abs(c.Aspect()-fac.Aspect()) < 0.02)
+	require.True(t, math.Abs(c.AspectRatio()-fac.AspectRatio()) < 0.02)
 }
 
 func TestBoxConstrain(t *testing.T) {

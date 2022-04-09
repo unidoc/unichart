@@ -10,7 +10,6 @@ import (
 
 const (
 	bufferMinimumGrow     = 4
-	bufferShrinkThreshold = 32
 	bufferGrowFactor      = 200
 	bufferDefaultCapacity = 4
 )

@@ -100,13 +100,11 @@ func (xa XAxis) Measure(r render.Renderer, canvasBox render.Box, ra sequence.Ran
 		case TickPositionUnderTick, TickPositionUnset:
 			ltx = tx - tb.Width()>>1
 			rtx = tx + tb.Width()>>1
-			break
 		case TickPositionBetweenTicks:
 			if index > 0 {
 				ltx = ra.Translate(ticks[index-1].Value)
 				rtx = tx
 			}
-			break
 		}
 
 		left = mathutil.MinInt(left, ltx)
@@ -164,7 +162,6 @@ func (xa XAxis) Render(r render.Renderer, canvasBox render.Box, ra sequence.Rang
 			}
 			render.Text.Draw(r, t.Label, tx, ty, tickWithAxisStyle)
 			maxTextHeight = mathutil.MaxInt(maxTextHeight, tb.Height())
-			break
 		case TickPositionBetweenTicks:
 			if index > 0 {
 				llx := ra.Translate(ticks[index-1].Value)
@@ -181,7 +178,6 @@ func (xa XAxis) Render(r render.Renderer, canvasBox render.Box, ra sequence.Rang
 				ftb := render.Text.MeasureLines(r, render.Text.WrapFit(r, t.Label, tx-ltx, finalTickStyle), finalTickStyle)
 				maxTextHeight = mathutil.MaxInt(maxTextHeight, ftb.Height())
 			}
-			break
 		}
 	}
 
