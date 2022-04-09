@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	unichart "github.com/unidoc/unichart"
+	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/creator"

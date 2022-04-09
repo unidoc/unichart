@@ -4,7 +4,7 @@ import (
 	"image/color"
 	"log"
 
-	unichart "github.com/unidoc/unichart"
+	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/render"

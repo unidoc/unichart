@@ -4,8 +4,7 @@ import (
 	"image/color"
 	"log"
 
-	chart "github.com/unidoc/unichart"
-	unichart "github.com/unidoc/unichart"
+	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/creator"
@@ -34,7 +33,7 @@ func main() {
 		},
 		BarWidth: 30,
 		YAxis: unichart.YAxis{
-			Ticks: []chart.Tick{
+			Ticks: []unichart.Tick{
 				{Value: -4.0, Label: "-4"},
 				{Value: -2.0, Label: "-2"},
 				{Value: 0, Label: "0"},

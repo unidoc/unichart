@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	unichart "github.com/unidoc/unichart"
+	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unipdf/v3/creator"
 )

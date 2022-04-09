@@ -3,8 +3,7 @@ package main
 import (
 	"log"
 
-	chart "github.com/unidoc/unichart"
-	unichart "github.com/unidoc/unichart"
+	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/render"
@@ -35,14 +34,14 @@ func main() {
 	}
 
 	chart := &unichart.Chart{
-		YAxis: chart.YAxis{
+		YAxis: unichart.YAxis{
 			Name: "Random Values",
 			Range: &sequence.ContinuousRange{
 				Min: 25,
 				Max: 175,
 			},
 		},
-		XAxis: chart.XAxis{
+		XAxis: unichart.XAxis{
 			Name: "Random Other Values",
 		},
 		Series: []dataset.Series{
