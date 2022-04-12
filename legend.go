@@ -129,7 +129,7 @@ func LegendThin(c *Chart, userDefaults ...render.Style) render.Renderable {
 			StrokeColor: render.DefaultLineColor,
 			StrokeWidth: defaultAxisLineWidth,
 			Padding: render.Box{
-				Top:    2,
+				Top:    5,
 				Left:   7,
 				Right:  7,
 				Bottom: 5,
