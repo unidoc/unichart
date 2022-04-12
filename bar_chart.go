@@ -202,25 +202,33 @@ func (bc *BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr sequenc
 		bxl = xoffset + bs2
 		bxr = bxl + width
 
-		by = canvasBox.Bottom - yr.Translate(bar.Value)
+		barStyle := bar.Style.InheritFrom(bc.styleDefaultsBar(index))
+		strokeWidth := barStyle.GetStrokeWidth()
+		strokeOffset := int(strokeWidth / 2)
+
+		height := yr.Translate(bar.Value)
+		if height == 0 {
+			height = int(strokeWidth)
+		}
+		by = canvasBox.Bottom - height
 
 		if bc.UseBaseValue {
 			barBox = render.Box{
 				Top:    by,
 				Left:   bxl,
 				Right:  bxr,
-				Bottom: canvasBox.Bottom - yr.Translate(bc.BaseValue),
+				Bottom: canvasBox.Bottom - yr.Translate(bc.BaseValue) - strokeOffset,
 			}
 		} else {
 			barBox = render.Box{
 				Top:    by,
 				Left:   bxl,
 				Right:  bxr,
-				Bottom: canvasBox.Bottom,
+				Bottom: canvasBox.Bottom - strokeOffset,
 			}
 		}
 
-		barBox.Draw(r, bar.Style.InheritFrom(bc.styleDefaultsBar(index)))
+		barBox.Draw(r, barStyle)
 		xoffset += width + spacing
 	}
 }
@@ -460,7 +468,6 @@ func (bc *BarChart) styleDefaultsBackground() render.Style {
 func (bc *BarChart) styleDefaultsBar(index int) render.Style {
 	return render.Style{
 		StrokeColor: bc.GetColorPalette().GetSeriesColor(index),
-		StrokeWidth: 3.0,
 		FillColor:   bc.GetColorPalette().GetSeriesColor(index),
 	}
 }

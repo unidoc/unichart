@@ -260,6 +260,7 @@ func (b Box) Draw(r Renderer, s Style) {
 	r.LineTo(b.Right, b.Bottom)
 	r.LineTo(b.Left, b.Bottom)
 	r.LineTo(b.Left, b.Top)
+	r.Close()
 	r.FillStroke()
 }
 

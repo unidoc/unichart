@@ -5,6 +5,7 @@ import (
 
 	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
+	"github.com/unidoc/unichart/dataset/sequence"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/creator"
 )
@@ -30,6 +31,19 @@ func main() {
 		},
 	}
 	chart.SetHeight(400)
+
+	// Set Y-axis custom range.
+	var max float64
+	for _, bar := range chart.Bars {
+		if max < bar.Value {
+			max = bar.Value
+		}
+	}
+
+	rng := &sequence.ContinuousRange{}
+	rng.SetMin(0)
+	rng.SetMax(max)
+	chart.YAxis.Range = rng
 
 	// Create unipdf chart component.
 	c := creator.New()

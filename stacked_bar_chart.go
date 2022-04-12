@@ -167,34 +167,40 @@ func (sbc StackedBarChart) drawBar(r render.Renderer, canvasBox render.Box, xoff
 	bxr := bxl + bar.GetWidth()
 
 	normalizedBarComponents := dataset.Values(bar.Values).Normalize()
+	lenBarComponents := len(normalizedBarComponents)
 	yoffset := canvasBox.Top
+
 	for index, bv := range normalizedBarComponents {
-		barHeight := int(math.Ceil(bv.Value * float64(canvasBox.Height())))
+		var barHeight int
+		if index == lenBarComponents-1 {
+			// Use remaining space for the last bar component in order to
+			// avoid rounding inconsistencies.
+			barHeight = canvasBox.Bottom - render.DefaultStrokeWidth - yoffset
+		} else {
+			barHeight = int(math.Ceil(bv.Value * float64(canvasBox.Height())))
+		}
+
+		// Draw bar.
+		barStyle := bv.Style.InheritFrom(sbc.styleDefaultsStackedBarValue(index))
+		strokeOffset := int(barStyle.StrokeWidth / 2)
+
 		barBox := render.Box{
 			Top:    yoffset,
 			Left:   bxl,
 			Right:  bxr,
-			Bottom: mathutil.MinInt(yoffset+barHeight, canvasBox.Bottom-render.DefaultStrokeWidth),
+			Bottom: mathutil.MinInt(yoffset+barHeight, canvasBox.Bottom-render.DefaultStrokeWidth) - strokeOffset,
 		}
+		barBox.Draw(r, barStyle)
 
-		barBox.Draw(r, bv.Style.InheritFrom(sbc.styleDefaultsStackedBarValue(index)))
-		yoffset += barHeight
-	}
-
-	// draw the labels
-	yoffset = canvasBox.Top
-	var lx, ly int
-	for index, bv := range normalizedBarComponents {
-		barHeight := int(math.Ceil(bv.Value * float64(canvasBox.Height())))
-
+		// Draw label.
 		if len(bv.Label) > 0 {
-			lx = bxl + ((bxr - bxl) / 2)
-			ly = yoffset + (barHeight / 2)
+			lx := bxl + ((bxr - bxl) / 2)
+			ly := yoffset + (barHeight / 2)
 
-			bv.Style.InheritFrom(sbc.styleDefaultsStackedBarValue(index)).WriteToRenderer(r)
+			barStyle.WriteToRenderer(r)
 			tb := r.MeasureText(bv.Label)
-			lx = lx - (tb.Width() >> 1)
-			ly = ly + (tb.Height() >> 1)
+			lx = lx - (tb.Width() / 2)
+			ly = ly + (tb.Height() / 2)
 
 			if lx < 0 {
 				lx = 0
@@ -205,6 +211,8 @@ func (sbc StackedBarChart) drawBar(r render.Renderer, canvasBox render.Box, xoff
 
 			r.Text(bv.Label, lx, ly)
 		}
+
+		// Update Y offset.
 		yoffset += barHeight
 	}
 
@@ -213,37 +221,41 @@ func (sbc StackedBarChart) drawBar(r render.Renderer, canvasBox render.Box, xoff
 
 func (sbc StackedBarChart) drawHorizontalBar(r render.Renderer, canvasBox render.Box, yoffset int, bar StackedBar) {
 	halfBarSpacing := sbc.GetBarSpacing() >> 1
-
 	boxTop := yoffset + halfBarSpacing
 	boxBottom := boxTop + bar.GetWidth()
 
 	normalizedBarComponents := dataset.Values(bar.Values).Normalize()
-
+	lenBarComponents := len(normalizedBarComponents)
 	xOffset := canvasBox.Right
 	for index, bv := range normalizedBarComponents {
-		barHeight := int(math.Floor(bv.Value * float64(canvasBox.Width())))
+		var barWidth int
+		if index == lenBarComponents-1 {
+			// Use remaining space for the last bar component in order to
+			// avoid rounding inconsistencies.
+			barWidth = xOffset - canvasBox.Left - render.DefaultStrokeWidth
+		} else {
+			barWidth = int(math.Ceil(bv.Value * float64(canvasBox.Width())))
+		}
+
+		// Draw bar.
+		barStyle := bv.Style.InheritFrom(sbc.styleDefaultsStackedBarValue(index))
+		strokeOffset := int(barStyle.StrokeWidth / 2)
+
 		barBox := render.Box{
 			Top:    boxTop,
-			Left:   mathutil.MinInt(xOffset-barHeight, canvasBox.Left+render.DefaultStrokeWidth),
+			Left:   mathutil.MinInt(xOffset-barWidth, canvasBox.Left+render.DefaultStrokeWidth) + strokeOffset,
 			Right:  xOffset,
 			Bottom: boxBottom,
 		}
 
-		barBox.Draw(r, bv.Style.InheritFrom(sbc.styleDefaultsStackedBarValue(index)))
-		xOffset -= barHeight
-	}
+		barBox.Draw(r, barStyle)
 
-	// draw the labels
-	xOffset = canvasBox.Right
-	var lx, ly int
-	for index, bv := range normalizedBarComponents {
-		barHeight := int(math.Ceil(bv.Value * float64(canvasBox.Width())))
-
+		// Draw label.
 		if len(bv.Label) > 0 {
-			lx = xOffset - (barHeight / 2)
-			ly = boxTop + ((boxBottom - boxTop) / 2)
+			lx := xOffset - (barWidth / 2)
+			ly := boxTop + ((boxBottom - boxTop) / 2)
 
-			bv.Style.InheritFrom(sbc.styleDefaultsStackedBarValue(index)).WriteToRenderer(r)
+			barStyle.WriteToRenderer(r)
 			tb := r.MeasureText(bv.Label)
 			lx = lx - (tb.Width() >> 1)
 			ly = ly + (tb.Height() >> 1)
@@ -257,7 +269,9 @@ func (sbc StackedBarChart) drawHorizontalBar(r render.Renderer, canvasBox render
 
 			r.Text(bv.Label, lx, ly)
 		}
-		xOffset -= barHeight
+
+		// Update X offset.
+		xOffset -= barWidth
 	}
 }
 
@@ -537,7 +551,6 @@ func (sbc StackedBarChart) Box() render.Box {
 func (sbc StackedBarChart) styleDefaultsStackedBarValue(index int) render.Style {
 	return render.Style{
 		StrokeColor: sbc.GetColorPalette().GetSeriesColor(index),
-		StrokeWidth: 3.0,
 		FillColor:   sbc.GetColorPalette().GetSeriesColor(index),
 		FontSize:    sbc.getScaledFontSize(),
 		FontColor:   sbc.GetColorPalette().TextColor(),
