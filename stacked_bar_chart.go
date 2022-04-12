@@ -237,7 +237,7 @@ func (sbc StackedBarChart) drawHorizontalBar(r render.Renderer, canvasBox render
 	xOffset = canvasBox.Right
 	var lx, ly int
 	for index, bv := range normalizedBarComponents {
-		barHeight := int(math.Ceil(bv.Value * float64(canvasBox.Width())))
+		barHeight := int(math.Floor(bv.Value * float64(canvasBox.Width())))
 
 		if len(bv.Label) > 0 {
 			lx = xOffset - (barHeight / 2)
