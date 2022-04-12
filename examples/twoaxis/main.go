@@ -20,10 +20,9 @@ func main() {
 	// Create chart component.
 	chart := &unichart.Chart{
 		XAxis: unichart.XAxis{
-			TickPosition: unichart.TickPositionUnderTick,
+			TickPosition: unichart.TickPositionBetweenTicks,
 			ValueFormatter: func(v interface{}) string {
 				d := time.Unix(0, int64(v.(float64)))
-				fmt.Println(int64(v.(float64)), d)
 				return fmt.Sprintf("%02d-%02d\n%d", d.Month(), d.Day(), d.Year())
 			},
 		},
