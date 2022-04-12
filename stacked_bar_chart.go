@@ -537,7 +537,6 @@ func (sbc StackedBarChart) Box() render.Box {
 func (sbc StackedBarChart) styleDefaultsStackedBarValue(index int) render.Style {
 	return render.Style{
 		StrokeColor: sbc.GetColorPalette().GetSeriesColor(index),
-		StrokeWidth: 3.0,
 		FillColor:   sbc.GetColorPalette().GetSeriesColor(index),
 		FontSize:    sbc.getScaledFontSize(),
 		FontColor:   sbc.GetColorPalette().TextColor(),

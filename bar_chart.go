@@ -460,7 +460,6 @@ func (bc *BarChart) styleDefaultsBackground() render.Style {
 func (bc *BarChart) styleDefaultsBar(index int) render.Style {
 	return render.Style{
 		StrokeColor: bc.GetColorPalette().GetSeriesColor(index),
-		StrokeWidth: 3.0,
 		FillColor:   bc.GetColorPalette().GetSeriesColor(index),
 	}
 }
