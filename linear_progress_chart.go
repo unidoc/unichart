@@ -13,7 +13,6 @@ type LinearProgressChart struct {
 	Background   render.Style
 	Foreground   render.Style
 	ColorPalette render.ColorPalette
-	Canvas       render.Style
 
 	RoundedEdgeStart bool
 	RoundedEdgeEnd   bool
