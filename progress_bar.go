@@ -8,6 +8,7 @@ import (
 	"github.com/unidoc/unichart/render"
 )
 
+// ProgressBar is a component that will render progress bar component.
 type ProgressBar struct {
 	Background   render.Style
 	Foreground   render.Style
