@@ -8,8 +8,8 @@ import (
 	"github.com/unidoc/unichart/render"
 )
 
-// ProgressBar is a component that will render progress bar component.
-type ProgressBar struct {
+// LinearProgressChart is a component that will render progress bar component.
+type LinearProgressChart struct {
 	Background   render.Style
 	Foreground   render.Style
 	ColorPalette render.ColorPalette
@@ -27,18 +27,18 @@ type ProgressBar struct {
 
 // SetProgress set the progress that will represented by this chart.
 // Expected value should be float number between 0.0 - 1.0.
-func (pb *ProgressBar) SetProgress(progress float64) {
+func (pb *LinearProgressChart) SetProgress(progress float64) {
 	pb.progress = math.Max(0.0, math.Min(progress, 1.0))
 }
 
 // GetProgress returns the progress represented by this chart.
 // Returned value should be a float number between 0.0 - 1.0.
-func (pb *ProgressBar) GetProgress() float64 {
+func (pb *LinearProgressChart) GetProgress() float64 {
 	return pb.progress
 }
 
 // DPI returns the DPI of the progress bar.
-func (pb *ProgressBar) DPI() float64 {
+func (pb *LinearProgressChart) DPI() float64 {
 	if pb.dpi == 0 {
 		return defaultDPI
 	}
@@ -46,12 +46,12 @@ func (pb *ProgressBar) DPI() float64 {
 }
 
 // SetDPI sets the DPI for the progrss bar.
-func (pb *ProgressBar) SetDPI(dpi float64) {
+func (pb *LinearProgressChart) SetDPI(dpi float64) {
 	pb.dpi = dpi
 }
 
 // Width returns the chart width or the default value.
-func (pb *ProgressBar) Width() int {
+func (pb *LinearProgressChart) Width() int {
 	if pb.width == 0 {
 		return defaultChartWidth
 	}
@@ -59,12 +59,12 @@ func (pb *ProgressBar) Width() int {
 }
 
 // SetWidth sets the chart width.
-func (pb *ProgressBar) SetWidth(width int) {
+func (pb *LinearProgressChart) SetWidth(width int) {
 	pb.width = width
 }
 
 // Height returns the chart height or the default value.
-func (pb *ProgressBar) Height() int {
+func (pb *LinearProgressChart) Height() int {
 	if pb.height == 0 {
 		return defaultChartHeight
 	}
@@ -72,15 +72,15 @@ func (pb *ProgressBar) Height() int {
 }
 
 // SetHeight sets the chart height.
-func (pb *ProgressBar) SetHeight(height int) {
+func (pb *LinearProgressChart) SetHeight(height int) {
 	pb.height = height
 }
 
-func (pb *ProgressBar) getBackgroundStyle() render.Style {
+func (pb *LinearProgressChart) getBackgroundStyle() render.Style {
 	return pb.Background.InheritFrom(pb.styleDefaultsBackground())
 }
 
-func (pb *ProgressBar) styleDefaultsBackground() render.Style {
+func (pb *LinearProgressChart) styleDefaultsBackground() render.Style {
 	return render.Style{
 		FillColor:   pb.GetColorPalette().BackgroundColor(),
 		StrokeColor: pb.GetColorPalette().BackgroundStrokeColor(),
@@ -88,11 +88,11 @@ func (pb *ProgressBar) styleDefaultsBackground() render.Style {
 	}
 }
 
-func (pb *ProgressBar) getForegroundStyle() render.Style {
+func (pb *LinearProgressChart) getForegroundStyle() render.Style {
 	return pb.Foreground.InheritFrom(pb.styleDefaultsForeground())
 }
 
-func (pb *ProgressBar) styleDefaultsForeground() render.Style {
+func (pb *LinearProgressChart) styleDefaultsForeground() render.Style {
 	return render.Style{
 		FillColor:   pb.GetColorPalette().BackgroundColor(),
 		StrokeColor: pb.GetColorPalette().BackgroundStrokeColor(),
@@ -101,18 +101,18 @@ func (pb *ProgressBar) styleDefaultsForeground() render.Style {
 }
 
 // GetColorPalette returns the color palette for the chart.
-func (pb *ProgressBar) GetColorPalette() render.ColorPalette {
+func (pb *LinearProgressChart) GetColorPalette() render.ColorPalette {
 	if pb.ColorPalette != nil {
 		return pb.ColorPalette
 	}
 	return render.AlternateColorPalette
 }
 
-func (pb *ProgressBar) roundedEdgeRadius() float64 {
+func (pb *LinearProgressChart) roundedEdgeRadius() float64 {
 	return float64(pb.Height()) / 2
 }
 
-func (pb *ProgressBar) drawBar(r render.Renderer, width int, style render.Style) {
+func (pb *LinearProgressChart) drawBar(r render.Renderer, width int, style render.Style) {
 	roundStartRadius := 0.0
 	if pb.RoundedEdgeStart {
 		roundStartRadius = pb.roundedEdgeRadius()
@@ -158,18 +158,18 @@ func (pb *ProgressBar) drawBar(r render.Renderer, width int, style render.Style)
 	r.FillStroke()
 }
 
-func (pb *ProgressBar) drawBackground(r render.Renderer) {
+func (pb *LinearProgressChart) drawBackground(r render.Renderer) {
 	pb.drawBar(r, pb.Width(), pb.getBackgroundStyle())
 }
 
-func (pb *ProgressBar) drawForeground(r render.Renderer) {
+func (pb *LinearProgressChart) drawForeground(r render.Renderer) {
 	w := float64(pb.Width()) * pb.progress
 
 	pb.drawBar(r, int(w), pb.getForegroundStyle())
 }
 
 // Render renders the progrss bar with the given renderer to the given io.Writer.
-func (pb *ProgressBar) Render(rp render.RendererProvider, w io.Writer) error {
+func (pb *LinearProgressChart) Render(rp render.RendererProvider, w io.Writer) error {
 	r, err := rp(pb.Width(), pb.Height())
 	if err != nil {
 		return err

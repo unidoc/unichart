@@ -21,7 +21,7 @@ func init() {
 
 func main() {
 	// Create chart component.
-	bar := &unichart.ProgressBar{
+	bar := &unichart.LinearProgressChart{
 		Background: render.Style{
 			FillColor:   render.ColorBlue,
 			StrokeWidth: 1.0,
