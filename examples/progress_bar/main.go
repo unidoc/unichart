@@ -27,7 +27,7 @@ func main() {
 	// Create chart component.
 	linear := &unichart.LinearProgressChart{
 		BackgroundStyle: render.Style{
-			FillColor:   render.ColorBlue,
+			FillColor:   render.ColorAlternateLightGray,
 			StrokeWidth: 1.0,
 			StrokeColor: render.ColorRed,
 		},
@@ -39,11 +39,34 @@ func main() {
 		RoundedEdgeEnd:   true,
 	}
 	linear.SetHeight(20)
-	linear.SetProgress(0.68)
+	linear.SetProgress(0.32)
 
 	// Create unipdf chart component.
 	c := creator.New()
 	chartComponent := creator.NewChart(linear)
+
+	// Draw chart component.
+	if err := c.Draw(chartComponent); err != nil {
+		log.Fatalf("failed to draw chart: %v", err)
+	}
+
+	// Create chart component.
+	linear = &unichart.LinearProgressChart{
+		BackgroundStyle: render.Style{
+			FillColor: render.ColorBlue,
+		},
+		ForegroundStyle: render.Style{
+			FillColor: render.ColorRed,
+		},
+
+		RoundedEdgeStart: false,
+		RoundedEdgeEnd:   true,
+	}
+	linear.SetHeight(20)
+	linear.SetProgress(0.68)
+
+	// Create unipdf chart component.
+	chartComponent = creator.NewChart(linear)
 
 	// Draw chart component.
 	if err := c.Draw(chartComponent); err != nil {
@@ -73,6 +96,31 @@ func main() {
 	}
 	circular.SetSize(50)
 	circular.SetProgress(0.68)
+
+	chartComponent = creator.NewChart(circular)
+
+	// Draw chart component.
+	if err := c.Draw(chartComponent); err != nil {
+		log.Fatalf("failed to draw chart: %v", err)
+	}
+
+	circular = &unichart.CircularProgressChart{
+		BackgroundStyle: render.Style{
+			StrokeWidth: 20.0,
+			StrokeColor: render.ColorYellow,
+		},
+		ForegroundStyle: render.Style{
+			StrokeWidth: 20.0,
+			StrokeColor: render.ColorAlternateGreen,
+		},
+		LabelStyle: render.Style{
+			FontSize: 30,
+			Font:     labelFont,
+		},
+	}
+	circular.SetSize(100)
+	circular.SetProgress(0.3)
+	circular.SetLabel("30%")
 
 	chartComponent = creator.NewChart(circular)
 
