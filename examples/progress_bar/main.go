@@ -6,8 +6,10 @@ import (
 
 	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/render"
+	"github.com/unidoc/unipdf/v3/common"
 	"github.com/unidoc/unipdf/v3/common/license"
 	"github.com/unidoc/unipdf/v3/creator"
+	"github.com/unidoc/unipdf/v3/model"
 )
 
 func init() {
@@ -17,11 +19,13 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	common.SetLogger(common.NewConsoleLogger(common.LogLevelDebug))
 }
 
 func main() {
 	// Create chart component.
-	bar := &unichart.LinearProgressChart{
+	linear := &unichart.LinearProgressChart{
 		Background: render.Style{
 			FillColor:   render.ColorBlue,
 			StrokeWidth: 1.0,
@@ -34,12 +38,43 @@ func main() {
 		RoundedEdgeStart: true,
 		RoundedEdgeEnd:   true,
 	}
-	bar.SetHeight(20)
-	bar.SetProgress(0.68)
+	linear.SetHeight(20)
+	linear.SetProgress(0.68)
 
 	// Create unipdf chart component.
 	c := creator.New()
-	chartComponent := creator.NewChart(bar)
+	chartComponent := creator.NewChart(linear)
+
+	// Draw chart component.
+	if err := c.Draw(chartComponent); err != nil {
+		log.Fatalf("failed to draw chart: %v", err)
+	}
+
+	labelFont, err := model.NewStandard14Font(model.HelveticaBoldName)
+	if err != nil {
+		log.Println(err)
+	}
+
+	circular := &unichart.CircularProgressChart{
+		BackgroundStyle: render.Style{
+			StrokeWidth: 10.0,
+			StrokeColor: render.ColorAlternateLightGray,
+		},
+		ForegroundStyle: render.Style{
+			StrokeWidth: 10.0,
+			StrokeColor: render.ColorAlternateGreen,
+		},
+		LabelStyle: render.Style{
+			FontSize: 20,
+			Font:     labelFont,
+		},
+
+		Reversed: true,
+	}
+	circular.SetSize(50)
+	circular.SetProgress(0.68)
+
+	chartComponent = creator.NewChart(circular)
 
 	// Draw chart component.
 	if err := c.Draw(chartComponent); err != nil {
