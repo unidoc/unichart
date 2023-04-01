@@ -141,16 +141,28 @@ func (cp *CircularProgressChart) GetColorPalette() render.ColorPalette {
 }
 
 func (cp *CircularProgressChart) drawBackground(r render.Renderer) {
+	bgStyle := cp.getBackgroundStyle()
+
+	if bgStyle.Hidden {
+		return
+	}
+
 	radius := cp.Size() / 2.0
 
 	r.Circle(float64(radius), radius, radius)
-	r.SetFillColor(cp.getBackgroundStyle().FillColor)
-	r.SetStrokeColor(cp.getBackgroundStyle().StrokeColor)
-	r.SetStrokeWidth(cp.getBackgroundStyle().StrokeWidth)
+	r.SetFillColor(bgStyle.FillColor)
+	r.SetStrokeColor(bgStyle.StrokeColor)
+	r.SetStrokeWidth(bgStyle.StrokeWidth)
 	r.FillStroke()
 }
 
 func (cp *CircularProgressChart) drawForeground(r render.Renderer) {
+	fgStyle := cp.getForegroundStyle()
+
+	if fgStyle.Hidden {
+		return
+	}
+
 	radius := float64(cp.Size()) / 2.0
 	progressDeg := cp.progress * 360.0
 
@@ -160,14 +172,20 @@ func (cp *CircularProgressChart) drawForeground(r render.Renderer) {
 
 	r.MoveTo(int(radius), 0)
 	r.ArcTo(int(radius), int(radius), radius, radius, mathutil.DegreesToRadians(-90), mathutil.DegreesToRadians(progressDeg))
-	r.SetStrokeColor(cp.getForegroundStyle().StrokeColor)
-	r.SetStrokeWidth(cp.getForegroundStyle().StrokeWidth)
+	r.SetStrokeColor(fgStyle.StrokeColor)
+	r.SetStrokeWidth(fgStyle.StrokeWidth)
 	r.Stroke()
 }
 
 func (cp *CircularProgressChart) drawLabel(r render.Renderer) {
-	fgStrokeWidth := int(cp.getForegroundStyle().StrokeWidth)
-	render.Text.DrawWithin(r, cp.label, render.NewBox(fgStrokeWidth, fgStrokeWidth, cp.Size()-fgStrokeWidth, cp.Size()-fgStrokeWidth), cp.getLabelStyle())
+	labelStyle := cp.getLabelStyle()
+
+	if labelStyle.Hidden || cp.label == "" {
+		return
+	}
+
+	fgStrokeWidth := int(labelStyle.StrokeWidth)
+	render.Text.DrawWithin(r, cp.label, render.NewBox(fgStrokeWidth, fgStrokeWidth, cp.Size()-fgStrokeWidth, cp.Size()-fgStrokeWidth), labelStyle)
 }
 
 // Render renders the progrss bar with the given renderer to the given io.Writer.
@@ -180,10 +198,7 @@ func (cp *CircularProgressChart) Render(rp render.RendererProvider, w io.Writer)
 
 	cp.drawBackground(r)
 	cp.drawForeground(r)
-
-	if cp.label != "" {
-		cp.drawLabel(r)
-	}
+	cp.drawLabel(r)
 
 	return r.Save(w)
 }

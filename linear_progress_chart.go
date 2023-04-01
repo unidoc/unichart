@@ -10,17 +10,26 @@ import (
 
 // LinearProgressChart is a component that will render progress bar component.
 type LinearProgressChart struct {
-	Background   render.Style
-	Foreground   render.Style
+	// Style for the background bar.
+	BackgroundStyle render.Style
+
+	// Style for the foreground bar.
+	ForegroundStyle render.Style
+
+	//
 	ColorPalette render.ColorPalette
 
+	// Flag to enable rounded edge at the start of the bar.
 	RoundedEdgeStart bool
-	RoundedEdgeEnd   bool
+
+	// Flag to enable rounded edge at the end of the bar.
+	RoundedEdgeEnd bool
 
 	height int
 	width  int
 	dpi    float64
 
+	// Progress values which should be between 0.0 - 1.0.
 	progress float64
 }
 
@@ -76,7 +85,7 @@ func (lp *LinearProgressChart) SetHeight(height int) {
 }
 
 func (lp *LinearProgressChart) getBackgroundStyle() render.Style {
-	return lp.Background.InheritFrom(lp.styleDefaultsBackground())
+	return lp.BackgroundStyle.InheritFrom(lp.styleDefaultsBackground())
 }
 
 func (lp *LinearProgressChart) styleDefaultsBackground() render.Style {
@@ -88,7 +97,7 @@ func (lp *LinearProgressChart) styleDefaultsBackground() render.Style {
 }
 
 func (lp *LinearProgressChart) getForegroundStyle() render.Style {
-	return lp.Foreground.InheritFrom(lp.styleDefaultsForeground())
+	return lp.ForegroundStyle.InheritFrom(lp.styleDefaultsForeground())
 }
 
 func (lp *LinearProgressChart) styleDefaultsForeground() render.Style {
@@ -158,13 +167,24 @@ func (lp *LinearProgressChart) drawBar(r render.Renderer, width int, style rende
 }
 
 func (lp *LinearProgressChart) drawBackground(r render.Renderer) {
-	lp.drawBar(r, lp.Width(), lp.getBackgroundStyle())
+	bgStyle := lp.getBackgroundStyle()
+
+	if bgStyle.Hidden {
+		return
+	}
+
+	lp.drawBar(r, lp.Width(), bgStyle)
 }
 
 func (lp *LinearProgressChart) drawForeground(r render.Renderer) {
-	w := float64(lp.Width()) * lp.progress
+	fgStyle := lp.getForegroundStyle()
 
-	lp.drawBar(r, int(w), lp.getForegroundStyle())
+	if fgStyle.Hidden {
+		return
+	}
+
+	w := float64(lp.Width()) * lp.progress
+	lp.drawBar(r, int(w), fgStyle)
 }
 
 // Render renders the progrss bar with the given renderer to the given io.Writer.

@@ -26,12 +26,12 @@ func init() {
 func main() {
 	// Create chart component.
 	linear := &unichart.LinearProgressChart{
-		Background: render.Style{
+		BackgroundStyle: render.Style{
 			FillColor:   render.ColorBlue,
 			StrokeWidth: 1.0,
 			StrokeColor: render.ColorRed,
 		},
-		Foreground: render.Style{
+		ForegroundStyle: render.Style{
 			FillColor: render.ColorAlternateGreen,
 		},
 
