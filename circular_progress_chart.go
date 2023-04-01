@@ -87,7 +87,7 @@ func (cp *CircularProgressChart) SetWidth(width int) {
 
 // Height returns the chart height.
 func (cp *CircularProgressChart) Height() int {
-	return cp.Height()
+	return cp.Size()
 }
 
 // SetHeight sets the chart height.
