@@ -25,7 +25,7 @@ func init() {
 
 func main() {
 	// Create chart component.
-	linear := &unichart.LinearProgressChart{
+	linear := &unichart.LinearProgressBar{
 		BackgroundStyle: render.Style{
 			FillColor:   render.ColorAlternateLightGray,
 			StrokeWidth: 1.0,
@@ -51,7 +51,7 @@ func main() {
 	}
 
 	// Create chart component.
-	linear = &unichart.LinearProgressChart{
+	linear = &unichart.LinearProgressBar{
 		BackgroundStyle: render.Style{
 			FillColor: render.ColorBlue,
 		},
@@ -78,7 +78,7 @@ func main() {
 		log.Println(err)
 	}
 
-	circular := &unichart.CircularProgressChart{
+	circular := &unichart.CircularProgressBar{
 		BackgroundStyle: render.Style{
 			StrokeWidth: 10.0,
 			StrokeColor: render.ColorAlternateLightGray,
@@ -104,7 +104,7 @@ func main() {
 		log.Fatalf("failed to draw chart: %v", err)
 	}
 
-	circular = &unichart.CircularProgressChart{
+	circular = &unichart.CircularProgressBar{
 		BackgroundStyle: render.Style{
 			StrokeWidth: 20.0,
 			StrokeColor: render.ColorYellow,
