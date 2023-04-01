@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image/color"
 	"log"
 	"os"
 
@@ -24,113 +25,181 @@ func init() {
 }
 
 func main() {
-	// Create chart component.
-	linear := &unichart.LinearProgressBar{
-		BackgroundStyle: render.Style{
+	c := creator.New()
+
+	linearProgressBars(c)
+	circularProgressBars(c)
+
+	// Save output file.
+	if err := c.WriteToFile("output.pdf"); err != nil {
+		log.Fatalf("failed to write output file: %v", err)
+	}
+}
+
+func linearProgressBars(c *creator.Creator) {
+	// Linear progress bars
+	addLinearProgressBar(c, 0.32, true, true, 20,
+		render.Style{
 			FillColor:   render.ColorAlternateLightGray,
 			StrokeWidth: 1.0,
 			StrokeColor: render.ColorRed,
 		},
-		ForegroundStyle: render.Style{
+		render.Style{
 			FillColor: render.ColorAlternateGreen,
 		},
+	)
 
-		RoundedEdgeStart: true,
-		RoundedEdgeEnd:   true,
+	addLinearProgressBar(c, 0.68, false, true, 20,
+		render.Style{
+			FillColor: render.ColorBlue,
+		},
+		render.Style{
+			FillColor: render.ColorRed,
+		},
+	)
+
+	addLinearProgressBar(c, 0.96, true, true, 16,
+		render.Style{
+			FillColor:   color.RGBA{R: 221, G: 254, B: 218, A: 255},
+			StrokeWidth: 1.0,
+			StrokeColor: color.RGBA{R: 196, G: 196, B: 196, A: 255},
+		},
+		render.Style{
+			FillColor: color.RGBA{R: 144, G: 205, B: 62, A: 255},
+		},
+	)
+
+	addLinearProgressBar(c, 0.7432, true, true, 16,
+		render.Style{
+			FillColor:   color.RGBA{R: 248, G: 239, B: 223, A: 255},
+			StrokeWidth: 1.0,
+			StrokeColor: color.RGBA{R: 196, G: 196, B: 196, A: 255},
+		},
+		render.Style{
+			FillColor: color.RGBA{R: 209, G: 145, B: 85, A: 255},
+		},
+	)
+
+	addLinearProgressBar(c, 0.32, true, true, 16,
+		render.Style{
+			FillColor:   color.RGBA{R: 254, G: 246, B: 245, A: 255},
+			StrokeWidth: 1.0,
+			StrokeColor: color.RGBA{R: 196, G: 196, B: 196, A: 255},
+		},
+		render.Style{
+			FillColor: color.RGBA{R: 143, G: 47, B: 26, A: 255},
+		},
+	)
+}
+
+func addLinearProgressBar(c *creator.Creator, progress float64, roundStart bool, roundEnd bool,
+	height int, bgStyle render.Style, fgStyle render.Style) {
+	// Create chart component.
+	linear := &unichart.LinearProgressBar{
+		BackgroundStyle: bgStyle,
+		ForegroundStyle: fgStyle,
+
+		RoundedEdgeStart: roundStart,
+		RoundedEdgeEnd:   roundEnd,
 	}
-	linear.SetHeight(20)
-	linear.SetProgress(0.32)
+	linear.SetHeight(height)
+	linear.SetProgress(progress)
 
 	// Create unipdf chart component.
-	c := creator.New()
 	chartComponent := creator.NewChart(linear)
 
 	// Draw chart component.
 	if err := c.Draw(chartComponent); err != nil {
 		log.Fatalf("failed to draw chart: %v", err)
 	}
+}
 
-	// Create chart component.
-	linear = &unichart.LinearProgressBar{
-		BackgroundStyle: render.Style{
-			FillColor: render.ColorBlue,
-		},
-		ForegroundStyle: render.Style{
-			FillColor: render.ColorRed,
-		},
-
-		RoundedEdgeStart: false,
-		RoundedEdgeEnd:   true,
-	}
-	linear.SetHeight(20)
-	linear.SetProgress(0.68)
-
-	// Create unipdf chart component.
-	chartComponent = creator.NewChart(linear)
-
-	// Draw chart component.
-	if err := c.Draw(chartComponent); err != nil {
-		log.Fatalf("failed to draw chart: %v", err)
-	}
-
+func circularProgressBars(c *creator.Creator) {
+	// Circular progress bars
 	labelFont, err := model.NewStandard14Font(model.HelveticaBoldName)
 	if err != nil {
 		log.Println(err)
 	}
 
-	circular := &unichart.CircularProgressBar{
-		BackgroundStyle: render.Style{
+	addCircularProgressBar(c, 0.68, 50, "", false,
+		render.Style{
 			StrokeWidth: 10.0,
 			StrokeColor: render.ColorAlternateLightGray,
 		},
-		ForegroundStyle: render.Style{
+		render.Style{
 			StrokeWidth: 10.0,
 			StrokeColor: render.ColorAlternateGreen,
 		},
-		LabelStyle: render.Style{
+		render.Style{
 			FontSize: 20,
 			Font:     labelFont,
 		},
+	)
 
-		Reversed: true,
-	}
-	circular.SetSize(50)
-	circular.SetProgress(0.68)
-
-	chartComponent = creator.NewChart(circular)
-
-	// Draw chart component.
-	if err := c.Draw(chartComponent); err != nil {
-		log.Fatalf("failed to draw chart: %v", err)
-	}
-
-	circular = &unichart.CircularProgressBar{
-		BackgroundStyle: render.Style{
-			StrokeWidth: 20.0,
-			StrokeColor: render.ColorYellow,
+	addCircularProgressBar(c, 0.96, 80, "A", true,
+		render.Style{
+			StrokeWidth: 15.0,
+			StrokeColor: color.RGBA{R: 221, G: 254, B: 218, A: 255},
 		},
-		ForegroundStyle: render.Style{
-			StrokeWidth: 20.0,
-			StrokeColor: render.ColorAlternateGreen,
+		render.Style{
+			StrokeWidth: 15.0,
+			StrokeColor: color.RGBA{R: 144, G: 205, B: 62, A: 255},
 		},
-		LabelStyle: render.Style{
+		render.Style{
 			FontSize: 30,
 			Font:     labelFont,
 		},
-	}
-	circular.SetSize(100)
-	circular.SetProgress(0.3)
-	circular.SetLabel("30%")
+	)
 
-	chartComponent = creator.NewChart(circular)
+	addCircularProgressBar(c, 0.6934, 80, "C", true,
+		render.Style{
+			StrokeWidth: 15.0,
+			StrokeColor: color.RGBA{R: 248, G: 239, B: 223, A: 255},
+		},
+		render.Style{
+			StrokeWidth: 15.0,
+			StrokeColor: color.RGBA{R: 209, G: 145, B: 85, A: 255},
+		},
+		render.Style{
+			FontSize: 30,
+			Font:     labelFont,
+		},
+	)
+
+	addCircularProgressBar(c, 0.4906, 80, "F", true,
+		render.Style{
+			StrokeWidth: 15.0,
+			StrokeColor: color.RGBA{R: 254, G: 246, B: 245, A: 255},
+		},
+		render.Style{
+			StrokeWidth: 15.0,
+			StrokeColor: color.RGBA{R: 143, G: 47, B: 26, A: 255},
+		},
+		render.Style{
+			FontSize: 30,
+			Font:     labelFont,
+		},
+	)
+}
+
+func addCircularProgressBar(c *creator.Creator, progress float64, size int, label string, reversed bool,
+	bgStyle render.Style, fgStyle render.Style, labelStyle render.Style) {
+	circular := &unichart.CircularProgressBar{
+		BackgroundStyle: bgStyle,
+		ForegroundStyle: fgStyle,
+		LabelStyle:      labelStyle,
+
+		Reversed: reversed,
+	}
+	circular.SetSize(size)
+	circular.SetProgress(progress)
+	circular.SetLabel(label)
+
+	chartComponent := creator.NewChart(circular)
+	chartComponent.SetMargins(0, 0, 20, 20)
 
 	// Draw chart component.
 	if err := c.Draw(chartComponent); err != nil {
 		log.Fatalf("failed to draw chart: %v", err)
-	}
-
-	// Save output file.
-	if err := c.WriteToFile("output.pdf"); err != nil {
-		log.Fatalf("failed to write output file: %v", err)
 	}
 }
