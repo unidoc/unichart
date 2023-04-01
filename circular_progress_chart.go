@@ -9,20 +9,25 @@ import (
 	"github.com/unidoc/unipdf/v3/model"
 )
 
-// CircularProgressChart is a component that will render progress bar component.
+// CircularProgressChart is a component that will render circular progress bar component.
 type CircularProgressChart struct {
 	BackgroundStyle render.Style
 	ForegroundStyle render.Style
 	LabelStyle      render.Style
 	ColorPalette    render.ColorPalette
 
+	// If the value is true then the progress bar would rendered counter clockwise.
 	Reversed bool
 
+	// Size of the progress bar in width and height.
 	size int
 	dpi  float64
 
+	// Progress values which should be between 0.0 - 1.0.
 	progress float64
-	label    string
+
+	// Label to be displayed in the center of the chart.
+	label string
 }
 
 // SetProgress set the progress that will represented by this chart.
@@ -71,18 +76,18 @@ func (cp *CircularProgressChart) GetLabel() string {
 	return cp.label
 }
 
-// Width returns the chart width or the default value.
+// Width returns the chart width.
 func (cp *CircularProgressChart) Width() int {
-	return 0
+	return cp.Size()
 }
 
 // SetWidth sets the chart width.
 func (cp *CircularProgressChart) SetWidth(width int) {
 }
 
-// Height returns the chart height or the default value.
+// Height returns the chart height.
 func (cp *CircularProgressChart) Height() int {
-	return 0
+	return cp.Height()
 }
 
 // SetHeight sets the chart height.
