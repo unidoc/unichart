@@ -90,6 +90,17 @@ func linearProgressBars(c *creator.Creator) {
 			FillColor: color.RGBA{R: 143, G: 47, B: 26, A: 255},
 		},
 	)
+
+	addLinearProgressBar(c, 0.32, false, false, 25,
+		render.Style{
+			FillColor:   color.RGBA{R: 255, G: 255, B: 255, A: 255},
+			StrokeWidth: 1.0,
+			StrokeColor: color.RGBA{R: 218, G: 218, B: 218, A: 255},
+		},
+		render.Style{
+			FillColor: color.RGBA{R: 242, G: 172, B: 59, A: 255},
+		},
+	)
 }
 
 func addLinearProgressBar(c *creator.Creator, progress float64, roundStart bool, roundEnd bool,
