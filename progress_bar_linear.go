@@ -6,6 +6,7 @@ import (
 
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
+	"github.com/unidoc/unipdf/v3/model"
 )
 
 // LinearProgressBar is a component that will render progress bar component.
@@ -15,6 +16,9 @@ type LinearProgressBar struct {
 
 	// ForegroundStyle is the style for the foreground bar.
 	ForegroundStyle render.Style
+
+	// LabelStyle is the style for the label that will displayed on the progress bar.
+	LabelStyle render.Style
 
 	// ColorPalette is the color pallete that could be used to add colors in this progress bar
 	ColorPalette render.ColorPalette
@@ -43,6 +47,9 @@ type LinearProgressBar struct {
 
 	// progress is the progress bar values which should be between 0.0 - 1.0.
 	progress float64
+
+	// label is the text that will be displayed on the progress bar.
+	label string
 }
 
 // SetProgress set the progress that will represented by this chart.
@@ -96,6 +103,14 @@ func (lp *LinearProgressBar) SetHeight(height int) {
 	lp.height = height
 }
 
+func (lp *LinearProgressBar) SetLabel(label string) {
+	lp.label = label
+}
+
+func (lp *LinearProgressBar) GetLabel() string {
+	return lp.label
+}
+
 func (lp *LinearProgressBar) getBackgroundStyle() render.Style {
 	return lp.BackgroundStyle.InheritFrom(lp.styleDefaultsBackground())
 }
@@ -117,6 +132,20 @@ func (lp *LinearProgressBar) styleDefaultsForeground() render.Style {
 		FillColor:   lp.GetColorPalette().BackgroundColor(),
 		StrokeColor: lp.GetColorPalette().BackgroundStrokeColor(),
 		StrokeWidth: render.DefaultStrokeWidth,
+	}
+}
+
+func (lp *LinearProgressBar) getLabelStyle() render.Style {
+	return lp.LabelStyle.InheritFrom(lp.styleDefaultsLabel())
+}
+
+func (lp *LinearProgressBar) styleDefaultsLabel() render.Style {
+	return render.Style{
+		Font:                model.DefaultFont(),
+		FontSize:            render.DefaultFontSize,
+		FontColor:           lp.getForegroundStyle().FillColor,
+		TextHorizontalAlign: render.TextHorizontalAlignLeft,
+		TextVerticalAlign:   render.TextVerticalAlignMiddle,
 	}
 }
 
@@ -199,6 +228,19 @@ func (lp *LinearProgressBar) drawForeground(r render.Renderer) {
 	lp.drawBar(r, int(w), fgStyle)
 }
 
+func (lp *LinearProgressBar) drawLabel(r render.Renderer) {
+	labelStyle := lp.getLabelStyle()
+
+	if labelStyle.Hidden || lp.label == "" {
+		return
+	}
+
+	x := float64(lp.Width()) * lp.progress
+	y := lp.barYPos
+
+	render.Text.DrawWithin(r, lp.label, render.NewBox(y, int(x)+10, lp.Width(), y+lp.height), labelStyle)
+}
+
 func (lp *LinearProgressBar) drawTopInfo(r render.Renderer) {
 	x := float64(lp.Width()) * lp.progress
 
@@ -232,6 +274,7 @@ func (lp *LinearProgressBar) Render(rp render.RendererProvider, w io.Writer) err
 	lp.drawTopInfo(r)
 	lp.drawBackground(r)
 	lp.drawForeground(r)
+	lp.drawLabel(r)
 	lp.drawBottomInfo(r)
 
 	return r.Save(w)
