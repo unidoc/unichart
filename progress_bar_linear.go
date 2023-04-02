@@ -10,26 +10,26 @@ import (
 
 // LinearProgressBar is a component that will render progress bar component.
 type LinearProgressBar struct {
-	// Style for the background bar.
+	// BackgroundStyle is the style for the background bar.
 	BackgroundStyle render.Style
 
-	// Style for the foreground bar.
+	// ForegroundStyle is the style for the foreground bar.
 	ForegroundStyle render.Style
 
-	//
+	// ColorPalette is the color pallete that could be used to add colors in this progress bar
 	ColorPalette render.ColorPalette
 
-	// Flag to enable rounded edge at the start of the bar.
+	// RoundedEdgeStart is a flag to enable rounded edge at the start of the bar.
 	RoundedEdgeStart bool
 
-	// Flag to enable rounded edge at the end of the bar.
+	// RoundedEdgeEnd us a flag to enable rounded edge at the end of the bar.
 	RoundedEdgeEnd bool
 
 	height int
 	width  int
 	dpi    float64
 
-	// Progress values which should be between 0.0 - 1.0.
+	// progress is the progress bar values which should be between 0.0 - 1.0.
 	progress float64
 }
 

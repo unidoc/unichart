@@ -11,22 +11,29 @@ import (
 
 // CircularProgressBar is a component that will render circular progress bar component.
 type CircularProgressBar struct {
+	// BackgroundStyle is the style for the background bar.
 	BackgroundStyle render.Style
-	ForegroundStyle render.Style
-	LabelStyle      render.Style
-	ColorPalette    render.ColorPalette
 
-	// If the value is true then the progress bar would rendered counter clockwise.
+	// ForegroundStyle is the style for the foreground bar.
+	ForegroundStyle render.Style
+
+	// LabelStyle is the style for the label that will displayed in the center of the progress bar.
+	LabelStyle render.Style
+
+	// ColorPalette is the color pallete that could be used to add colors in this progress bar
+	ColorPalette render.ColorPalette
+
+	// Reversed is a flag where if the value is true then the progress bar would rendered counter clockwise.
 	Reversed bool
 
-	// Size of the progress bar in width and height.
+	// size is the size of the progress bar in width and height.
 	size int
 	dpi  float64
 
-	// Progress values which should be between 0.0 - 1.0.
+	// progress is the progress bar values which should be between 0.0 - 1.0.
 	progress float64
 
-	// Label to be displayed in the center of the chart.
+	// label is the text to be displayed in the center of the chart.
 	label string
 }
 
@@ -81,7 +88,8 @@ func (cp *CircularProgressBar) Width() int {
 	return cp.Size()
 }
 
-// SetWidth sets the chart width.
+// SetWidth method is exists to fuifill the requirements of render.ChartRenderable interface.
+// To set width or height of this circular progress bar, use SetSize instead.
 func (cp *CircularProgressBar) SetWidth(width int) {
 }
 
@@ -90,7 +98,8 @@ func (cp *CircularProgressBar) Height() int {
 	return cp.Size()
 }
 
-// SetHeight sets the chart height.
+// SetHeight method is exists to fuifill the requirements of render.ChartRenderable interface.
+// To set width or height of this circular progress bar, use SetSize instead.
 func (cp *CircularProgressBar) SetHeight(height int) {
 }
 
