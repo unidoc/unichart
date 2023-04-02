@@ -25,9 +25,18 @@ type LinearProgressBar struct {
 	// RoundedEdgeEnd us a flag to enable rounded edge at the end of the bar.
 	RoundedEdgeEnd bool
 
+	// CustomTopInfo defines a user provided function to draw a custom info above the progress bar.
+	// The callback function should return the height used to render the info, which would be used
+	// to shift down the progress bar position.
+	CustomTopInfo func(r render.Renderer, x int) int
+
+	// CustomBottomInfo defines a user provided function to draw a custom info under the progress bar.
+	CustomBottomInfo func(r render.Renderer, x int)
+
 	height int
 	width  int
 	dpi    float64
+	yPos   int
 
 	// progress is the progress bar values which should be between 0.0 - 1.0.
 	progress float64
@@ -76,7 +85,7 @@ func (lp *LinearProgressBar) Height() int {
 	if lp.height == 0 {
 		return defaultChartHeight
 	}
-	return lp.height
+	return lp.height + lp.yPos
 }
 
 // SetHeight sets the chart height.
@@ -117,7 +126,7 @@ func (lp *LinearProgressBar) GetColorPalette() render.ColorPalette {
 }
 
 func (lp *LinearProgressBar) roundedEdgeRadius() float64 {
-	return float64(lp.Height()) / 2
+	return float64(lp.height) / 2
 }
 
 func (lp *LinearProgressBar) drawBar(r render.Renderer, width int, style render.Style) {
@@ -131,24 +140,24 @@ func (lp *LinearProgressBar) drawBar(r render.Renderer, width int, style render.
 		roundEndRadius = lp.roundedEdgeRadius()
 	}
 
-	h := lp.Height()
+	h := lp.height
 
-	r.MoveTo(int(roundStartRadius), 0)
-	r.LineTo(width-int(roundEndRadius), 0)
+	r.MoveTo(int(roundStartRadius), lp.yPos)
+	r.LineTo(width-int(roundEndRadius), lp.yPos)
 
 	if lp.RoundedEdgeEnd {
-		r.ArcTo(width-int(roundEndRadius), h/2, roundEndRadius, roundEndRadius, mathutil.DegreesToRadians(-90), mathutil.DegreesToRadians(180))
+		r.ArcTo(width-int(roundEndRadius), lp.yPos+h/2, roundEndRadius, roundEndRadius, mathutil.DegreesToRadians(-90), mathutil.DegreesToRadians(180))
 	} else {
-		r.LineTo(width, h)
+		r.LineTo(width, lp.yPos+h)
 	}
 
-	r.MoveTo(width-int(roundEndRadius), h)
-	r.LineTo(int(roundStartRadius), h)
+	r.MoveTo(width-int(roundEndRadius), lp.yPos+h)
+	r.LineTo(int(roundStartRadius), lp.yPos+h)
 
 	if lp.RoundedEdgeStart {
-		r.ArcTo(int(roundStartRadius), h/2, roundStartRadius, roundStartRadius, mathutil.DegreesToRadians(90), mathutil.DegreesToRadians(180))
+		r.ArcTo(int(roundStartRadius), lp.yPos+h/2, roundStartRadius, roundStartRadius, mathutil.DegreesToRadians(90), mathutil.DegreesToRadians(180))
 	} else {
-		r.LineTo(0, 0)
+		r.LineTo(0, lp.yPos)
 	}
 
 	r.SetFillColor(style.FillColor)
@@ -187,16 +196,42 @@ func (lp *LinearProgressBar) drawForeground(r render.Renderer) {
 	lp.drawBar(r, int(w), fgStyle)
 }
 
+func (lp *LinearProgressBar) drawTopInfo(r render.Renderer) {
+	x := float64(lp.Width()) * lp.progress
+
+	if lp.CustomTopInfo != nil {
+		infoHeight := lp.CustomTopInfo(r, int(x))
+
+		lp.yPos = infoHeight
+
+		return
+	}
+}
+
+func (lp *LinearProgressBar) drawBottomInfo(r render.Renderer) {
+	x := float64(lp.Width()) * lp.progress
+
+	if lp.CustomBottomInfo != nil {
+		lp.CustomBottomInfo(r, int(x))
+
+		return
+	}
+}
+
 // Render renders the progrss bar with the given renderer to the given io.Writer.
 func (lp *LinearProgressBar) Render(rp render.RendererProvider, w io.Writer) error {
-	r, err := rp(lp.Width(), lp.Height())
+	r, err := rp(lp.Width(), lp.height)
 	if err != nil {
 		return err
 	}
 	r.SetDPI(lp.DPI())
 
+	lp.yPos = 0
+
+	lp.drawTopInfo(r)
 	lp.drawBackground(r)
 	lp.drawForeground(r)
+	lp.drawBottomInfo(r)
 
 	return r.Save(w)
 }
