@@ -107,7 +107,7 @@ func linearProgressBars(c *creator.Creator) {
 			r.SetStrokeColor(color.RGBA{R: 214, G: 214, B: 214, A: 255})
 			r.Stroke()
 
-			render.Text.Draw(r, "Custom label here", x+10, 0,
+			render.Text.Draw(r, "Custom top label here", x+10, 0,
 				render.Style{
 					Font:      model.DefaultFont(),
 					FontSize:  14,
@@ -116,7 +116,24 @@ func linearProgressBars(c *creator.Creator) {
 			)
 
 			return 20
-		}, nil,
+		},
+		func(r render.Renderer, x int) int {
+			r.MoveTo(x, 40)
+			r.LineTo(x, 70)
+			r.SetStrokeWidth(1.0)
+			r.SetStrokeColor(color.RGBA{R: 214, G: 214, B: 214, A: 255})
+			r.Stroke()
+
+			render.Text.Draw(r, "Custom bottom label here", x+10, 70,
+				render.Style{
+					Font:      model.DefaultFont(),
+					FontSize:  14,
+					FontColor: color.RGBA{R: 143, G: 47, B: 26, A: 255},
+				},
+			)
+
+			return 30
+		},
 	)
 
 	addLinearProgressBar(c, 0.32, false, false, 25,
@@ -138,7 +155,7 @@ func addLinearProgressBar(c *creator.Creator, progress float64, roundStart bool,
 
 func addLinearProgressBarWithCustomInfo(c *creator.Creator, progress float64, roundStart bool, roundEnd bool,
 	height int, bgStyle render.Style, fgStyle render.Style,
-	customTopInfo func(r render.Renderer, x int) int, customBottomInfo func(r render.Renderer, x int)) {
+	customTopInfo func(r render.Renderer, x int) int, customBottomInfo func(r render.Renderer, x int) int) {
 	// Create chart component.
 	linear := &unichart.LinearProgressBar{
 		BackgroundStyle: bgStyle,
