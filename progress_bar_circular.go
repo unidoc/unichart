@@ -62,7 +62,7 @@ func (cp *CircularProgressBar) SetDPI(dpi float64) {
 	cp.dpi = dpi
 }
 
-// Width returns the chart size or the default value.
+// Size returns the chart size or the default value.
 func (cp *CircularProgressBar) Size() int {
 	if cp.size == 0 {
 		return defaultChartWidth
@@ -70,15 +70,17 @@ func (cp *CircularProgressBar) Size() int {
 	return cp.size
 }
 
-// SetWidth sets the chart size.
+// SetSize sets the chart size.
 func (cp *CircularProgressBar) SetSize(size int) {
 	cp.size = size
 }
 
+// SetLabel sets the label that would be displayed in the center of the progress bar.
 func (cp *CircularProgressBar) SetLabel(label string) {
 	cp.label = label
 }
 
+// GetLabel returns the label displayed in the center of the progress bar.
 func (cp *CircularProgressBar) GetLabel() string {
 	return cp.label
 }

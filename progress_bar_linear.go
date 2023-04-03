@@ -103,10 +103,12 @@ func (lp *LinearProgressBar) SetHeight(height int) {
 	lp.height = height
 }
 
+// SetLabel sets the labe that would be rendered on the progress bar.
 func (lp *LinearProgressBar) SetLabel(label string) {
 	lp.label = label
 }
 
+// GetLabel would returns label that rendered on the progress bar.
 func (lp *LinearProgressBar) GetLabel() string {
 	return lp.label
 }
