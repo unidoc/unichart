@@ -57,7 +57,7 @@ func (cp *CircularProgressBar) DPI() float64 {
 	return cp.dpi
 }
 
-// SetDPI sets the DPI for the progrss bar.
+// SetDPI sets the DPI for the progress bar.
 func (cp *CircularProgressBar) SetDPI(dpi float64) {
 	cp.dpi = dpi
 }
@@ -199,7 +199,7 @@ func (cp *CircularProgressBar) drawLabel(r render.Renderer) {
 	render.Text.DrawWithin(r, cp.label, render.NewBox(fgStrokeWidth, fgStrokeWidth, cp.Size()-fgStrokeWidth, cp.Size()-fgStrokeWidth), labelStyle)
 }
 
-// Render renders the progrss bar with the given renderer to the given io.Writer.
+// Render renders the progress bar with the given renderer to the given io.Writer.
 func (cp *CircularProgressBar) Render(rp render.RendererProvider, w io.Writer) error {
 	r, err := rp(cp.Size(), cp.Size())
 	if err != nil {
