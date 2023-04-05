@@ -38,6 +38,14 @@ For usage and output samples, see the [examples](examples) directory.
 
 ![Sample donut chart output](examples/donut_chart/preview.png)
 
+### Linear Progress Bar
+
+![Sample linear progress bar](examples/progress_bar/preview_linear.png)
+
+### Circular Progress Bar
+
+![Sample circular progress bar](examples/progress_bar/preview_circular.png)
+
 # License
 
 This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
