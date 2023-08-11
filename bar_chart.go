@@ -128,6 +128,14 @@ func (bc *BarChart) Render(rp render.RendererProvider, w io.Writer) error {
 
 	if bc.hasAxes() {
 		yt = bc.getAxesTicks(r, yr, yf)
+
+		// Adjust domain range if max tick value is exceeding the original max range.
+		lastTick := yt[len(yt)-1].Value
+		if lastTick > yr.GetMax() {
+			yr.SetMax(lastTick)
+			yr = bc.setRangeDomains(canvasBox, yr)
+		}
+
 		canvasBox = bc.getAdjustedCanvasBox(r, canvasBox, yr, yt)
 		yr = bc.setRangeDomains(canvasBox, yr)
 	}

@@ -79,8 +79,7 @@ func generateContinuousTicks(r render.Renderer, ra sequence.Range, isVertical bo
 
 		nTicks := niceTicks(min, max, intermediateTickCount)
 		for ti, t := range nTicks {
-			// If the label value is lower than the min value or higher than the max value, skip it.
-			if ti == 0 || t < min || t > max {
+			if ti == 0 {
 				continue
 			}
 
