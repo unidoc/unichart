@@ -115,14 +115,26 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 	if c.hasAxes() {
 		xt, yt, yta = c.getAxesTicks(r, xr, yr, yra, xf, yf, yfa)
 
-		// Adjust domain range if max tick value is exceeding the original max range.
+		// Adjust domain range before adjusting the canvas box
+		// if the generated max tick value is exceeding the original max range.
+		firstXTick := xt[0].Value
 		lastXTick := xt[len(xt)-1].Value
+		firstYTick := yt[0].Value
 		lastYTick := yt[len(yt)-1].Value
-		if lastXTick > xr.GetMax() || lastYTick > yr.GetMax() {
+
+		if xr.IsDescending() {
+			xr.SetMax(firstXTick)
+		} else {
 			xr.SetMax(lastXTick)
-			yr.SetMax(lastYTick)
-			xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)
 		}
+
+		if yr.IsDescending() {
+			yr.SetMax(firstYTick)
+		} else {
+			yr.SetMax(lastYTick)
+		}
+
+		xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)
 
 		canvasBox = c.getAxesAdjustedCanvasBox(r, canvasBox, xr, yr, yra, xt, yt, yta)
 		xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)

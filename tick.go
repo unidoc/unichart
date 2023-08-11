@@ -78,11 +78,16 @@ func generateContinuousTicks(r render.Renderer, ra sequence.Range, isVertical bo
 		intermediateTickCount = mathutil.MinInt(intermediateTickCount, defaultTickCountSanityCheck)
 
 		nTicks := niceTicks(min, max, intermediateTickCount)
-		for ti, t := range nTicks {
-			if ti == 0 {
-				continue
+		if ra.IsDescending() {
+			// Reverse generated ticks.
+			for i := len(nTicks)/2 - 1; i >= 0; i-- {
+				opp := len(nTicks) - 1 - i
+				nTicks[i], nTicks[opp] = nTicks[opp], nTicks[i]
 			}
+		}
 
+		ticks = []Tick{}
+		for _, t := range nTicks {
 			ticks = append(ticks, Tick{
 				Value: t,
 				Label: vf(t),
