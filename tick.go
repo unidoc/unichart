@@ -160,7 +160,7 @@ func niceNum(value float64, round bool) float64 {
 	return niceFraction * math.Pow(10, exponent)
 }
 
-// nixwTicks generates ticks value with a rounded up values.
+// niceTicks generates ticks value with a rounded up values.
 func niceTicks(min, max float64, numTicks int) (tickValues []float64) {
 	rangeValue := niceNum(max-min, false)
 	tickSpacing := niceNum(rangeValue/(float64(numTicks)-1), true)
