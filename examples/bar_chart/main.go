@@ -7,6 +7,7 @@ import (
 	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/dataset/sequence"
+	"github.com/unidoc/unichart/examples"
 	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/common/license"
 	"github.com/unidoc/unipdf/v3/creator"
@@ -69,4 +70,6 @@ func main() {
 	if err := c.WriteToFile("output.pdf"); err != nil {
 		log.Fatalf("failed to write output file: %v", err)
 	}
+
+	examples.RenderPDFToImage("output.pdf")
 }
