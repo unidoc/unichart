@@ -123,8 +123,10 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 		lastYTick := yt[len(yt)-1].Value
 
 		if xr.IsDescending() {
+			xr.SetMin(lastXTick)
 			xr.SetMax(firstXTick)
 		} else {
+			xr.SetMin(firstXTick)
 			xr.SetMax(lastXTick)
 		}
 
