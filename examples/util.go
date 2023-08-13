@@ -1,7 +1,6 @@
 package examples
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -22,28 +21,19 @@ func RenderPDFToImage(filename string) {
 		log.Fatalf("Could not create reader: %v", err)
 	}
 
-	// Get total number of pages.
-	numPages, err := reader.GetNumPages()
-	if err != nil {
-		log.Fatalf("Could not retrieve number of pages: %v", err)
-	}
-
 	// Render pages.
 	device := render.NewImageDevice()
 	device.OutputWidth = 2000
-	for i := 1; i <= numPages; i++ {
-		// Get page.
-		page, err := reader.GetPage(i)
-		if err != nil {
-			log.Fatalf("Could not retrieve page: %v", err)
-		}
 
-		// Render page to PNG file.
-		imgFileName := fmt.Sprintf("preview_%d.png", i)
+	// Get page.
+	page, err := reader.GetPage(1)
+	if err != nil {
+		log.Fatalf("Could not retrieve page: %v", err)
+	}
 
-		err = device.RenderToPath(page, imgFileName)
-		if err != nil {
-			log.Fatalf("Image rendering error: %v", err)
-		}
+	// Render page to PNG file.
+	err = device.RenderToPath(page, "preview.png")
+	if err != nil {
+		log.Fatalf("Image rendering error: %v", err)
 	}
 }
