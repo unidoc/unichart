@@ -6,7 +6,6 @@ import (
 
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
-	"github.com/unidoc/unipdf/v3/model"
 )
 
 // LinearProgressBar is a component that will render progress bar component.
@@ -143,7 +142,6 @@ func (lp *LinearProgressBar) getLabelStyle() render.Style {
 
 func (lp *LinearProgressBar) styleDefaultsLabel() render.Style {
 	return render.Style{
-		Font:                model.DefaultFont(),
 		FontSize:            render.DefaultFontSize,
 		FontColor:           lp.getForegroundStyle().FillColor,
 		TextHorizontalAlign: render.TextHorizontalAlignLeft,
