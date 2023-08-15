@@ -9,5 +9,3 @@ require (
 )
 
 replace github.com/unidoc/unichart => ../
-
-replace github.com/unidoc/unipdf/v3 => ../../unipdf-src
