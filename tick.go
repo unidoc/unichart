@@ -2,9 +2,7 @@ package unichart
 
 import (
 	"math"
-	"reflect"
-	"runtime"
-	"strings"
+	"strconv"
 
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/dataset/sequence"
@@ -73,8 +71,9 @@ func generateContinuousTicks(r render.Renderer, ra sequence.Range, isVertical bo
 	domainRemainder := domain - (tickSize * 2)
 	intermediateTickCount := int(math.Floor(float64(domainRemainder) / float64(tickSize)))
 
-	formatterName := runtime.FuncForPC(reflect.ValueOf(vf).Pointer()).Name()
-	if strings.HasSuffix(formatterName, "FloatValueFormatter") {
+	// Decide to use nice ticks by checking if the first tick label is a float number.
+	_, err := strconv.ParseFloat(ticks[0].Label, 64)
+	if err == nil {
 		intermediateTickCount = mathutil.MinInt(intermediateTickCount, defaultTickCountSanityCheck)
 
 		nTicks := niceTicks(min, max, intermediateTickCount)
