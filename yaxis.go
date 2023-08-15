@@ -143,13 +143,14 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra sequence.Rang
 	var lx int
 	var tx int
 	if ya.AxisType == dataset.YAxisPrimary {
-		lx = canvasBox.Right + int(sw)
+		lx = canvasBox.Right
 		tx = lx + defaultYAxisMargin
 	} else if ya.AxisType == dataset.YAxisSecondary {
-		lx = canvasBox.Left - int(sw)
+		lx = canvasBox.Left
 		tx = lx - defaultYAxisMargin
 	}
 
+	r.SetStrokeWidth(sw)
 	r.MoveTo(lx, canvasBox.Bottom)
 	r.LineTo(lx, canvasBox.Top)
 	r.Stroke()

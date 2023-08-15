@@ -131,8 +131,10 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 		}
 
 		if yr.IsDescending() {
+			yr.SetMin(lastYTick)
 			yr.SetMax(firstYTick)
 		} else {
+			yr.SetMin(firstYTick)
 			yr.SetMax(lastYTick)
 		}
 
