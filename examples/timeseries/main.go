@@ -22,7 +22,7 @@ func init() {
 }
 
 func main() {
-	now := time.Now()
+	now := time.Date(2023, 8, 17, 0, 0, 0, 0, time.UTC)
 
 	chart := &unichart.Chart{
 		Series: []dataset.Series{

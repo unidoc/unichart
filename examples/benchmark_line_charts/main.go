@@ -32,13 +32,14 @@ func main() {
 	numValues := 1024
 	numSeries := 100
 	timeSeries := make([]dataset.Series, numSeries)
+	now := time.Date(2023, 8, 17, 0, 0, 0, 0, time.UTC)
 
 	for i := 0; i < numSeries; i++ {
 		xValues := make([]time.Time, numValues)
 		yValues := make([]float64, numValues)
 
 		for j := 0; j < numValues; j++ {
-			xValues[j] = time.Now().AddDate(0, 0, (numValues-j)*-1)
+			xValues[j] = now.AddDate(0, 0, (numValues-j)*-1)
 			yValues[j] = random(float64(-500), float64(500))
 		}
 
