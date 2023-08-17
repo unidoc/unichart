@@ -413,7 +413,7 @@ func (c *Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 		axesBounds := c.YAxis.Measure(r, canvasBox, yr, c.styleDefaultsAxes(), yticks)
 		axesOuterBox = axesOuterBox.Grow(axesBounds)
 	}
-	if !c.YAxisSecondary.Style.Hidden && c.hasSecondarySeries() {
+	if !c.YAxisSecondary.Style.Hidden {
 		axesBounds := c.YAxisSecondary.Measure(r, canvasBox, yra, c.styleDefaultsAxes(), yticksAlt)
 		axesOuterBox = axesOuterBox.Grow(axesBounds)
 	}
