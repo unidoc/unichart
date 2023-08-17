@@ -453,12 +453,12 @@ func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 
 // box returns the chart bounds as a box.
 func (bc *BarChart) box() render.Box {
-	dpr := bc.Background.Padding.GetRight(10)
-	dpb := bc.Background.Padding.GetBottom(50)
+	dpr := bc.Background.Padding.GetRight(defaultBackgroundPadding.Right)
+	dpb := bc.Background.Padding.GetBottom(defaultBackgroundPadding.Bottom)
 
 	return render.Box{
-		Top:    bc.Background.Padding.GetTop(20),
-		Left:   bc.Background.Padding.GetLeft(20),
+		Top:    bc.Background.Padding.GetTop(defaultBackgroundPadding.Top),
+		Left:   bc.Background.Padding.GetLeft(defaultBackgroundPadding.Left),
 		Right:  bc.Width() - dpr,
 		Bottom: bc.Height() - dpb,
 	}
