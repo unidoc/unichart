@@ -161,6 +161,7 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 		c.drawSeries(r, canvasBox, xr, yr, yra, series, index)
 	}
 
+	c.drawYAxisLine(r, canvasBox, xr, yr, yra, xt, yt, yta)
 	c.drawTitle(r)
 
 	for _, a := range c.Elements {
@@ -496,6 +497,15 @@ func (c *Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange
 	}
 	if !c.YAxisSecondary.Style.Hidden {
 		c.YAxisSecondary.Render(r, canvasBox, yrangeAlt, c.styleDefaultsAxes(), yticksAlt)
+	}
+}
+
+func (c *Chart) drawYAxisLine(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt sequence.Range, xticks, yticks, yticksAlt []Tick) {
+	if !c.YAxis.Style.Hidden {
+		c.YAxis.RenderAxisLine(r, canvasBox, yrange, c.styleDefaultsAxes(), yticks)
+	}
+	if !c.YAxisSecondary.Style.Hidden {
+		c.YAxisSecondary.RenderAxisLine(r, canvasBox, yrangeAlt, c.styleDefaultsAxes(), yticksAlt)
 	}
 }
 

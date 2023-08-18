@@ -150,11 +150,6 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra sequence.Rang
 		tx = lx - defaultYAxisMargin
 	}
 
-	r.SetStrokeWidth(sw)
-	r.MoveTo(lx, canvasBox.Bottom)
-	r.LineTo(lx, canvasBox.Top)
-	r.Stroke()
-
 	var maxTextWidth int
 	var finalTextX, finalTextY int
 	for _, t := range ticks {
@@ -233,4 +228,23 @@ func (ya YAxis) Render(r render.Renderer, canvasBox render.Box, ra sequence.Rang
 			}
 		}
 	}
+}
+
+func (ya YAxis) RenderAxisLine(r render.Renderer, canvasBox render.Box, ra sequence.Range, defaults render.Style, ticks []Tick) {
+	tickStyle := ya.TickStyle.InheritFrom(ya.Style.InheritFrom(defaults))
+	tickStyle.WriteToRenderer(r)
+
+	sw := tickStyle.GetStrokeWidth(defaults.StrokeWidth)
+
+	var lx int
+	if ya.AxisType == dataset.YAxisPrimary {
+		lx = canvasBox.Right
+	} else if ya.AxisType == dataset.YAxisSecondary {
+		lx = canvasBox.Left
+	}
+
+	r.SetStrokeWidth(sw)
+	r.MoveTo(lx, canvasBox.Bottom)
+	r.LineTo(lx, canvasBox.Top)
+	r.Stroke()
 }
