@@ -114,6 +114,32 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 
 	if c.hasAxes() {
 		xt, yt, yta = c.getAxesTicks(r, xr, yr, yra, xf, yf, yfa)
+
+		// Adjust domain range before adjusting the canvas box
+		// if the generated max tick value is exceeding the original max range.
+		firstXTick := xt[0].Value
+		lastXTick := xt[len(xt)-1].Value
+		firstYTick := yt[0].Value
+		lastYTick := yt[len(yt)-1].Value
+
+		if xr.IsDescending() {
+			xr.SetMin(lastXTick)
+			xr.SetMax(firstXTick)
+		} else {
+			xr.SetMin(firstXTick)
+			xr.SetMax(lastXTick)
+		}
+
+		if yr.IsDescending() {
+			yr.SetMin(lastYTick)
+			yr.SetMax(firstYTick)
+		} else {
+			yr.SetMin(firstYTick)
+			yr.SetMax(lastYTick)
+		}
+
+		xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)
+
 		canvasBox = c.getAxesAdjustedCanvasBox(r, canvasBox, xr, yr, yra, xt, yt, yta)
 		xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)
 
@@ -135,6 +161,7 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 		c.drawSeries(r, canvasBox, xr, yr, yra, series, index)
 	}
 
+	c.drawYAxisLine(r, canvasBox, xr, yr, yra, xt, yt, yta)
 	c.drawTitle(r)
 
 	for _, a := range c.Elements {
@@ -470,6 +497,15 @@ func (c *Chart) drawAxes(r render.Renderer, canvasBox render.Box, xrange, yrange
 	}
 	if !c.YAxisSecondary.Style.Hidden {
 		c.YAxisSecondary.Render(r, canvasBox, yrangeAlt, c.styleDefaultsAxes(), yticksAlt)
+	}
+}
+
+func (c *Chart) drawYAxisLine(r render.Renderer, canvasBox render.Box, xrange, yrange, yrangeAlt sequence.Range, xticks, yticks, yticksAlt []Tick) {
+	if !c.YAxis.Style.Hidden {
+		c.YAxis.RenderAxisLine(r, canvasBox, yrange, c.styleDefaultsAxes(), yticks)
+	}
+	if !c.YAxisSecondary.Style.Hidden {
+		c.YAxisSecondary.RenderAxisLine(r, canvasBox, yrangeAlt, c.styleDefaultsAxes(), yticksAlt)
 	}
 }
 

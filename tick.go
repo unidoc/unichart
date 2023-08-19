@@ -2,6 +2,7 @@ package unichart
 
 import (
 	"math"
+	"strconv"
 
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/dataset/sequence"
@@ -70,36 +71,104 @@ func generateContinuousTicks(r render.Renderer, ra sequence.Range, isVertical bo
 	domainRemainder := domain - (tickSize * 2)
 	intermediateTickCount := int(math.Floor(float64(domainRemainder) / float64(tickSize)))
 
-	rangeDelta := math.Abs(max - min)
-	tickStep := rangeDelta / float64(intermediateTickCount)
+	// Decide to use nice ticks by checking if the first tick label is a float number.
+	_, err := strconv.ParseFloat(ticks[0].Label, 64)
+	if err == nil {
+		intermediateTickCount = mathutil.MinInt(intermediateTickCount, defaultTickCountSanityCheck)
 
-	roundTo := mathutil.RoundTo(rangeDelta) / 10
-	intermediateTickCount = mathutil.MinInt(intermediateTickCount, defaultTickCountSanityCheck)
-
-	for x := 1; x < intermediateTickCount; x++ {
-		var tickValue float64
+		nTicks := niceTicks(min, max, intermediateTickCount)
 		if ra.IsDescending() {
-			tickValue = max - mathutil.RoundUp(tickStep*float64(x), roundTo)
-		} else {
-			tickValue = min + mathutil.RoundUp(tickStep*float64(x), roundTo)
+			// Reverse generated ticks.
+			for i := len(nTicks)/2 - 1; i >= 0; i-- {
+				opp := len(nTicks) - 1 - i
+				nTicks[i], nTicks[opp] = nTicks[opp], nTicks[i]
+			}
 		}
-		ticks = append(ticks, Tick{
-			Value: tickValue,
-			Label: vf(tickValue),
-		})
-	}
 
-	if ra.IsDescending() {
-		ticks = append(ticks, Tick{
-			Value: min,
-			Label: vf(min),
-		})
+		ticks = []Tick{}
+		for _, t := range nTicks {
+			ticks = append(ticks, Tick{
+				Value: t,
+				Label: vf(t),
+			})
+		}
 	} else {
-		ticks = append(ticks, Tick{
-			Value: max,
-			Label: vf(max),
-		})
+		rangeDelta := math.Abs(max - min)
+		tickStep := rangeDelta / float64(intermediateTickCount)
+
+		roundTo := mathutil.RoundTo(rangeDelta) / 10
+		intermediateTickCount = mathutil.MinInt(intermediateTickCount, defaultTickCountSanityCheck)
+
+		for x := 1; x < intermediateTickCount; x++ {
+			var tickValue float64
+			if ra.IsDescending() {
+				tickValue = max - mathutil.RoundUp(tickStep*float64(x), roundTo)
+			} else {
+				tickValue = min + mathutil.RoundUp(tickStep*float64(x), roundTo)
+			}
+			ticks = append(ticks, Tick{
+				Value: tickValue,
+				Label: vf(tickValue),
+			})
+		}
+
+		if ra.IsDescending() {
+			ticks = append(ticks, Tick{
+				Value: min,
+				Label: vf(min),
+			})
+		} else {
+			ticks = append(ticks, Tick{
+				Value: max,
+				Label: vf(max),
+			})
+		}
 	}
 
 	return ticks
+}
+
+// niceNum would round tick value to the nearest nice number.
+func niceNum(value float64, round bool) float64 {
+	exponent := math.Floor(math.Log10(value))
+	fraction := value / math.Pow(10, exponent)
+
+	var niceFraction float64
+	if round {
+		if fraction < 1.5 {
+			niceFraction = 1
+		} else if fraction < 3 {
+			niceFraction = 2
+		} else if fraction < 7 {
+			niceFraction = 5
+		} else {
+			niceFraction = 10
+		}
+	} else {
+		if fraction <= 1 {
+			niceFraction = 1
+		} else if fraction <= 2 {
+			niceFraction = 2
+		} else if fraction <= 5 {
+			niceFraction = 5
+		} else {
+			niceFraction = 10
+		}
+	}
+
+	return niceFraction * math.Pow(10, exponent)
+}
+
+// niceTicks generates ticks value with a rounded up values.
+func niceTicks(min, max float64, numTicks int) (tickValues []float64) {
+	rangeValue := niceNum(max-min, false)
+	tickSpacing := niceNum(rangeValue/(float64(numTicks)-1), true)
+	niceMin := math.Floor(min/tickSpacing) * tickSpacing
+	niceMax := math.Ceil(max/tickSpacing) * tickSpacing
+
+	for value := niceMin; value <= niceMax; value += tickSpacing {
+		tickValues = append(tickValues, value)
+	}
+
+	return tickValues
 }

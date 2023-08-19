@@ -6,7 +6,6 @@ import (
 
 	"github.com/unidoc/unichart/mathutil"
 	"github.com/unidoc/unichart/render"
-	"github.com/unidoc/unipdf/v3/model"
 )
 
 // CircularProgressBar is a component that will render circular progress bar component.
@@ -135,7 +134,6 @@ func (cp *CircularProgressBar) getLabelStyle() render.Style {
 
 func (cp *CircularProgressBar) styleDefaultsLabel() render.Style {
 	return render.Style{
-		Font:                model.DefaultFont(),
 		FontSize:            render.DefaultFontSize,
 		FontColor:           cp.getForegroundStyle().StrokeColor,
 		TextHorizontalAlign: render.TextHorizontalAlignCenter,
