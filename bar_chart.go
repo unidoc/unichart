@@ -439,7 +439,7 @@ func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 			Top:    canvasBox.Top,
 			Left:   canvasBox.Left,
 			Right:  canvasBox.Left + totalWidth,
-			Bottom: bc.Height() - xaxisHeight,
+			Bottom: canvasBox.Bottom + defaultXAxisMargin + xaxisHeight,
 		}
 
 		axesOuterBox = axesOuterBox.Grow(xbox)
