@@ -377,7 +377,7 @@ func (bc *BarChart) getAxesTicks(r render.Renderer, yr sequence.Range, yf datase
 func (bc *BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
 	totalWithBaseSpacing := bc.calculateTotalBarWidth(bc.GetBarWidth(), bc.GetBarSpacing())
 	if totalWithBaseSpacing > canvasBox.Width() {
-		lessBarWidths := canvasBox.Width() - (len(bc.Bars) * bc.GetBarWidth())
+		lessBarWidths := canvasBox.Width() - (len(bc.Bars) * bc.GetBarWidth()) - defaultHorizontalTickWidth
 		if lessBarWidths > 0 {
 			return int(math.Ceil(float64(lessBarWidths) / float64(len(bc.Bars))))
 		}
@@ -389,7 +389,7 @@ func (bc *BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
 func (bc *BarChart) calculateEffectiveBarWidth(canvasBox render.Box, spacing int) int {
 	totalWithBaseWidth := bc.calculateTotalBarWidth(bc.GetBarWidth(), spacing)
 	if totalWithBaseWidth > canvasBox.Width() {
-		totalLessBarSpacings := canvasBox.Width() - (len(bc.Bars) * spacing)
+		totalLessBarSpacings := canvasBox.Width() - (len(bc.Bars) * spacing) - defaultHorizontalTickWidth
 		if totalLessBarSpacings > 0 {
 			return int(math.Ceil(float64(totalLessBarSpacings) / float64(len(bc.Bars))))
 		}
