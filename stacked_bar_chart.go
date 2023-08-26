@@ -600,6 +600,7 @@ func (sbc StackedBarChart) getTitleFontSize() float64 {
 func (sbc StackedBarChart) styleDefaultsAxes() render.Style {
 	return render.Style{
 		StrokeColor:         render.DefaultLineColor,
+		StrokeWidth:         defaultAxisLineWidth,
 		Font:                sbc.GetFont(),
 		FontSize:            defaultAxisFontSize,
 		FontColor:           render.DefaultLineColor,
@@ -612,6 +613,7 @@ func (sbc StackedBarChart) styleDefaultsAxes() render.Style {
 func (sbc StackedBarChart) styleDefaultsHorizontalAxes() render.Style {
 	return render.Style{
 		StrokeColor:         render.DefaultLineColor,
+		StrokeWidth:         defaultAxisLineWidth,
 		Font:                sbc.GetFont(),
 		FontSize:            defaultAxisFontSize,
 		FontColor:           render.DefaultLineColor,
