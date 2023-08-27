@@ -88,28 +88,31 @@ func (xa XAxis) Measure(r render.Renderer, canvasBox render.Box, ra sequence.Ran
 	tp := xa.GetTickPosition()
 
 	var ltx, rtx int
-	var tx, ty int
+	var tx int
 	var left, right, bottom = math.MaxInt32, 0, 0
 	for index, t := range ticks {
 		v := t.Value
-		tb := render.Text.Measure(r, t.Label, tickStyle.GetTextOptions())
 
 		tx = canvasBox.Left + ra.Translate(v)
-		ty = canvasBox.Bottom + defaultXAxisMargin + tb.Height()
 		switch tp {
 		case TickPositionUnderTick, TickPositionUnset:
+			tb := render.Text.Measure(r, t.Label, tickStyle.GetTextOptions())
 			ltx = tx - tb.Width()>>1
 			rtx = tx + tb.Width()>>1
+			bottom = mathutil.MaxInt(bottom, tb.Height())
 		case TickPositionBetweenTicks:
 			if index > 0 {
 				ltx = ra.Translate(ticks[index-1].Value)
 				rtx = tx
+
+				finalTickStyle := tickStyle.InheritFrom(render.Style{TextHorizontalAlign: render.TextHorizontalAlignCenter})
+				ftb := render.Text.MeasureLines(r, render.Text.WrapFit(r, t.Label, tx-ltx, finalTickStyle), finalTickStyle)
+				bottom = mathutil.MaxInt(bottom, ftb.Height())
 			}
 		}
 
 		left = mathutil.MinInt(left, ltx)
 		right = mathutil.MaxInt(right, rtx)
-		bottom = mathutil.MaxInt(bottom, ty)
 	}
 
 	if !xa.NameStyle.Hidden && len(xa.Name) > 0 {
@@ -121,7 +124,7 @@ func (xa XAxis) Measure(r render.Renderer, canvasBox render.Box, ra sequence.Ran
 		Top:    canvasBox.Bottom,
 		Left:   left,
 		Right:  right,
-		Bottom: bottom,
+		Bottom: canvasBox.Bottom + defaultXAxisMargin + bottom,
 	}
 }
 

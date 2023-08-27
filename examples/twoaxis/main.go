@@ -9,6 +9,7 @@ import (
 	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/examples"
+	"github.com/unidoc/unichart/render"
 	"github.com/unidoc/unipdf/v3/common/license"
 	"github.com/unidoc/unipdf/v3/creator"
 )
@@ -36,6 +37,9 @@ func main() {
 			ValueFormatter: func(v interface{}) string {
 				d := time.Unix(0, int64(v.(float64)))
 				return fmt.Sprintf("%02d-%02d\n%d", d.Month(), d.Day(), d.Year())
+			},
+			TickStyle: render.Style{
+				TextWrap: render.TextWrapWord,
 			},
 		},
 		Series: []dataset.Series{
