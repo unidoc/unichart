@@ -117,25 +117,43 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 
 		// Adjust domain range before adjusting the canvas box
 		// if the generated max tick value is exceeding the original max range.
-		firstXTick := xt[0].Value
-		lastXTick := xt[len(xt)-1].Value
-		firstYTick := yt[0].Value
-		lastYTick := yt[len(yt)-1].Value
+		if len(xt) > 0 {
+			firstXTick := xt[0].Value
+			lastXTick := xt[len(xt)-1].Value
 
-		if xr.IsDescending() {
-			xr.SetMin(lastXTick)
-			xr.SetMax(firstXTick)
-		} else {
-			xr.SetMin(firstXTick)
-			xr.SetMax(lastXTick)
+			if xr.IsDescending() {
+				xr.SetMin(lastXTick)
+				xr.SetMax(firstXTick)
+			} else {
+				xr.SetMin(firstXTick)
+				xr.SetMax(lastXTick)
+			}
 		}
 
-		if yr.IsDescending() {
-			yr.SetMin(lastYTick)
-			yr.SetMax(firstYTick)
-		} else {
-			yr.SetMin(firstYTick)
-			yr.SetMax(lastYTick)
+		if len(yt) > 0 {
+			firstYTick := yt[0].Value
+			lastYTick := yt[len(yt)-1].Value
+
+			if yr.IsDescending() {
+				yr.SetMin(lastYTick)
+				yr.SetMax(firstYTick)
+			} else {
+				yr.SetMin(firstYTick)
+				yr.SetMax(lastYTick)
+			}
+		}
+
+		if len(yta) > 0 {
+			firstYTick := yta[0].Value
+			lastYTick := yta[len(yta)-1].Value
+
+			if yra.IsDescending() {
+				yra.SetMin(lastYTick)
+				yra.SetMax(firstYTick)
+			} else {
+				yra.SetMin(firstYTick)
+				yra.SetMax(lastYTick)
+			}
 		}
 
 		xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)
@@ -144,7 +162,6 @@ func (c *Chart) Render(rp render.RendererProvider, w io.Writer) error {
 		xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)
 
 		// do a second pass in case things haven't settled yet.
-		xt, yt, yta = c.getAxesTicks(r, xr, yr, yra, xf, yf, yfa)
 		canvasBox = c.getAxesAdjustedCanvasBox(r, canvasBox, xr, yr, yra, xt, yt, yta)
 		xr, yr, yra = c.setRangeDomains(canvasBox, xr, yr, yra)
 	}
@@ -413,7 +430,7 @@ func (c *Chart) getAxesAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 		axesBounds := c.YAxis.Measure(r, canvasBox, yr, c.styleDefaultsAxes(), yticks)
 		axesOuterBox = axesOuterBox.Grow(axesBounds)
 	}
-	if !c.YAxisSecondary.Style.Hidden && c.hasSecondarySeries() {
+	if !c.YAxisSecondary.Style.Hidden {
 		axesBounds := c.YAxisSecondary.Measure(r, canvasBox, yra, c.styleDefaultsAxes(), yticksAlt)
 		axesOuterBox = axesOuterBox.Grow(axesBounds)
 	}

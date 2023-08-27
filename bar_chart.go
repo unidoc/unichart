@@ -131,10 +131,12 @@ func (bc *BarChart) Render(rp render.RendererProvider, w io.Writer) error {
 
 		// Adjust domain range before adjusting the canvas box
 		// if the generated max tick value is exceeding the original max range.
-		if yr.IsDescending() {
-			yr.SetMax(yt[0].Value)
-		} else {
-			yr.SetMax(yt[len(yt)-1].Value)
+		if len(yt) > 0 {
+			if yr.IsDescending() {
+				yr.SetMax(yt[0].Value)
+			} else {
+				yr.SetMax(yt[len(yt)-1].Value)
+			}
 		}
 
 		yr = bc.setRangeDomains(canvasBox, yr)
@@ -375,7 +377,7 @@ func (bc *BarChart) getAxesTicks(r render.Renderer, yr sequence.Range, yf datase
 func (bc *BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
 	totalWithBaseSpacing := bc.calculateTotalBarWidth(bc.GetBarWidth(), bc.GetBarSpacing())
 	if totalWithBaseSpacing > canvasBox.Width() {
-		lessBarWidths := canvasBox.Width() - (len(bc.Bars) * bc.GetBarWidth())
+		lessBarWidths := canvasBox.Width() - (len(bc.Bars) * bc.GetBarWidth()) - defaultHorizontalTickWidth
 		if lessBarWidths > 0 {
 			return int(math.Ceil(float64(lessBarWidths) / float64(len(bc.Bars))))
 		}
@@ -387,7 +389,7 @@ func (bc *BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
 func (bc *BarChart) calculateEffectiveBarWidth(canvasBox render.Box, spacing int) int {
 	totalWithBaseWidth := bc.calculateTotalBarWidth(bc.GetBarWidth(), spacing)
 	if totalWithBaseWidth > canvasBox.Width() {
-		totalLessBarSpacings := canvasBox.Width() - (len(bc.Bars) * spacing)
+		totalLessBarSpacings := canvasBox.Width() - (len(bc.Bars) * spacing) - defaultHorizontalTickWidth
 		if totalLessBarSpacings > 0 {
 			return int(math.Ceil(float64(totalLessBarSpacings) / float64(len(bc.Bars))))
 		}
@@ -437,7 +439,7 @@ func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 			Top:    canvasBox.Top,
 			Left:   canvasBox.Left,
 			Right:  canvasBox.Left + totalWidth,
-			Bottom: bc.Height() - xaxisHeight,
+			Bottom: canvasBox.Bottom + defaultXAxisMargin + xaxisHeight,
 		}
 
 		axesOuterBox = axesOuterBox.Grow(xbox)
@@ -453,12 +455,12 @@ func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 
 // box returns the chart bounds as a box.
 func (bc *BarChart) box() render.Box {
-	dpr := bc.Background.Padding.GetRight(10)
-	dpb := bc.Background.Padding.GetBottom(50)
+	dpr := bc.Background.Padding.GetRight(defaultBackgroundPadding.Right)
+	dpb := bc.Background.Padding.GetBottom(defaultBackgroundPadding.Bottom)
 
 	return render.Box{
-		Top:    bc.Background.Padding.GetTop(20),
-		Left:   bc.Background.Padding.GetLeft(20),
+		Top:    bc.Background.Padding.GetTop(defaultBackgroundPadding.Top),
+		Left:   bc.Background.Padding.GetLeft(defaultBackgroundPadding.Left),
 		Right:  bc.Width() - dpr,
 		Bottom: bc.Height() - dpb,
 	}

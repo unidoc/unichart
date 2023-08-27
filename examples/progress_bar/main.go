@@ -8,7 +8,6 @@ import (
 	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/examples"
 	"github.com/unidoc/unichart/render"
-	"github.com/unidoc/unipdf/v3/common"
 	"github.com/unidoc/unipdf/v3/common/license"
 	"github.com/unidoc/unipdf/v3/creator"
 	"github.com/unidoc/unipdf/v3/model"
@@ -21,8 +20,6 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
-	common.SetLogger(common.NewConsoleLogger(common.LogLevelDebug))
 }
 
 func main() {

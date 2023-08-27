@@ -537,12 +537,12 @@ func (sbc StackedBarChart) getHorizontalAdjustedCanvasBox(r render.Renderer, can
 
 // Box returns the chart bounds as a box.
 func (sbc StackedBarChart) Box() render.Box {
-	dpr := sbc.Background.Padding.GetRight(10)
-	dpb := sbc.Background.Padding.GetBottom(50)
+	dpr := sbc.Background.Padding.GetRight(defaultBackgroundPadding.Right)
+	dpb := sbc.Background.Padding.GetBottom(defaultBackgroundPadding.Bottom)
 
 	return render.Box{
-		Top:    sbc.Background.Padding.GetTop(20),
-		Left:   sbc.Background.Padding.GetLeft(20),
+		Top:    sbc.Background.Padding.GetTop(defaultBackgroundPadding.Top),
+		Left:   sbc.Background.Padding.GetLeft(defaultBackgroundPadding.Left),
 		Right:  sbc.Width() - dpr,
 		Bottom: sbc.Height() - dpb,
 	}
