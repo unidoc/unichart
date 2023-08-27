@@ -513,6 +513,7 @@ func (bc *BarChart) getTitleFontSize() float64 {
 func (bc *BarChart) styleDefaultsAxes() render.Style {
 	return render.Style{
 		StrokeColor:         bc.GetColorPalette().AxisStrokeColor(),
+		StrokeWidth:         defaultAxisLineWidth,
 		Font:                bc.GetFont(),
 		FontSize:            defaultAxisFontSize,
 		FontColor:           bc.GetColorPalette().TextColor(),
