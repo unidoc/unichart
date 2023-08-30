@@ -25,8 +25,9 @@ type BarChart struct {
 	XAxis render.Style
 	YAxis YAxis
 
-	BarWidth   int
-	BarSpacing int
+	BarWidth     int
+	BarSpacing   int
+	IsHorizontal bool
 
 	UseBaseValue bool
 	BaseValue    float64
@@ -141,15 +142,28 @@ func (bc *BarChart) Render(rp render.RendererProvider, w io.Writer) error {
 
 		yr = bc.setRangeDomains(canvasBox, yr)
 
-		canvasBox = bc.getAdjustedCanvasBox(r, canvasBox, yr, yt)
+		if bc.IsHorizontal {
+			canvasBox = bc.getAdjustedHorizontalCanvasBox(r, canvasBox, yr, yt)
+		} else {
+			canvasBox = bc.getAdjustedCanvasBox(r, canvasBox, yr, yt)
+		}
 		yr = bc.setRangeDomains(canvasBox, yr)
 	}
+
 	bc.drawCanvas(r, canvasBox)
-	bc.drawBars(r, canvasBox, yr)
-	bc.drawXAxis(r, canvasBox)
-	bc.drawYAxis(r, canvasBox, yr, yt)
+
+	if bc.IsHorizontal {
+		bc.drawHorizontalBars(r, canvasBox, yr)
+		bc.drawHorizontalXAxis(r, canvasBox, yr, yt)
+		bc.drawHorizontalYAxis(r, canvasBox)
+	} else {
+		bc.drawBars(r, canvasBox, yr)
+		bc.drawXAxis(r, canvasBox)
+		bc.drawYAxis(r, canvasBox, yr, yt)
+	}
 
 	bc.drawTitle(r)
+
 	for _, a := range bc.Elements {
 		a(r, canvasBox, bc.styleDefaultsElements())
 	}
@@ -206,7 +220,7 @@ func (bc *BarChart) drawBackground(r render.Renderer) {
 func (bc *BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr sequence.Range) {
 	xoffset := canvasBox.Left
 
-	width, spacing, _ := bc.calculateScaledTotalWidth(canvasBox)
+	width, spacing, _ := bc.calculateScaledTotalSize(canvasBox)
 	bs2 := spacing >> 1
 
 	var barBox render.Box
@@ -246,12 +260,65 @@ func (bc *BarChart) drawBars(r render.Renderer, canvasBox render.Box, yr sequenc
 	}
 }
 
+func (bc *BarChart) drawHorizontalBars(r render.Renderer, canvasBox render.Box, yr sequence.Range) {
+	height, spacing, _ := bc.calculateScaledTotalSize(canvasBox)
+	bs2 := spacing >> 1
+
+	axisStyle := bc.XAxis.InheritFrom(bc.styleDefaultsAxes())
+	axisStyle.WriteToRenderer(r)
+
+	yoffset := canvasBox.Bottom - len(bc.Bars)*(height+spacing)
+
+	maxTextWidth := 0
+	for _, bar := range bc.Bars {
+		tb := r.MeasureText(bar.Label)
+
+		maxTextWidth = mathutil.MaxInt(maxTextWidth, tb.Width())
+	}
+
+	var barBox render.Box
+	var byt, byb, bx int
+	for index, bar := range bc.Bars {
+		byt = yoffset + bs2
+		byb = byt + height
+
+		barStyle := bar.Style.InheritFrom(bc.styleDefaultsBar(index))
+		strokeWidth := barStyle.GetStrokeWidth()
+		strokeOffset := int(strokeWidth / 2)
+
+		width := yr.Translate(bar.Value)
+		if width == 0 {
+			width = int(strokeWidth)
+		}
+		bx = canvasBox.Left + defaultYAxisMargin + width
+
+		if bc.UseBaseValue {
+			barBox = render.Box{
+				Top:    byt,
+				Left:   canvasBox.Left + yr.Translate(bc.BaseValue) - strokeOffset,
+				Right:  bx,
+				Bottom: byb,
+			}
+		} else {
+			barBox = render.Box{
+				Top:    byt,
+				Left:   canvasBox.Left + strokeOffset,
+				Right:  bx,
+				Bottom: byb,
+			}
+		}
+
+		barBox.Draw(r, barStyle)
+		yoffset += height + spacing
+	}
+}
+
 func (bc *BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 	if !bc.XAxis.Hidden {
 		axisStyle := bc.XAxis.InheritFrom(bc.styleDefaultsAxes())
 		axisStyle.WriteToRenderer(r)
 
-		width, spacing, _ := bc.calculateScaledTotalWidth(canvasBox)
+		width, spacing, _ := bc.calculateScaledTotalSize(canvasBox)
 
 		r.MoveTo(canvasBox.Left, canvasBox.Bottom)
 		r.LineTo(canvasBox.Right, canvasBox.Bottom)
@@ -285,6 +352,36 @@ func (bc *BarChart) drawXAxis(r render.Renderer, canvasBox render.Box) {
 	}
 }
 
+func (bc *BarChart) drawHorizontalXAxis(r render.Renderer, canvasBox render.Box, yr sequence.Range, ticks []Tick) {
+	if !bc.YAxis.Style.Hidden {
+		axisStyle := bc.YAxis.Style.InheritFrom(bc.styleDefaultsAxes())
+		axisStyle.WriteToRenderer(r)
+
+		r.MoveTo(canvasBox.Left, canvasBox.Bottom)
+		r.LineTo(canvasBox.Right, canvasBox.Bottom)
+		r.Stroke()
+
+		r.MoveTo(canvasBox.Left, canvasBox.Bottom)
+		r.LineTo(canvasBox.Left-defaultHorizontalTickWidth, canvasBox.Bottom)
+		r.Stroke()
+
+		var tx int
+		var tb render.Box
+		for _, t := range ticks {
+			tx = canvasBox.Left + yr.Translate(t.Value)
+
+			axisStyle.GetStrokeOptions().WriteToRenderer(r)
+			r.MoveTo(tx, canvasBox.Bottom)
+			r.LineTo(tx, canvasBox.Bottom+defaultHorizontalTickWidth)
+			r.Stroke()
+
+			axisStyle.GetTextOptions().WriteToRenderer(r)
+			tb = r.MeasureText(t.Label)
+			render.Text.Draw(r, t.Label, tx-(tb.Width()>>1), canvasBox.Bottom+defaultXAxisMargin+5, axisStyle)
+		}
+	}
+}
+
 func (bc *BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr sequence.Range, ticks []Tick) {
 	if !bc.YAxis.Style.Hidden {
 		axisStyle := bc.YAxis.Style.InheritFrom(bc.styleDefaultsAxes())
@@ -313,6 +410,49 @@ func (bc *BarChart) drawYAxis(r render.Renderer, canvasBox render.Box, yr sequen
 			render.Text.Draw(r, t.Label, canvasBox.Right+defaultYAxisMargin+5, ty+(tb.Height()>>1), axisStyle)
 		}
 
+	}
+}
+
+func (bc *BarChart) drawHorizontalYAxis(r render.Renderer, canvasBox render.Box) {
+	if !bc.XAxis.Hidden {
+		defaultStyle := bc.styleDefaultsAxes()
+		defaultStyle.TextHorizontalAlign = render.TextHorizontalAlignRight
+		defaultStyle.TextVerticalAlign = render.TextVerticalAlignMiddle
+
+		axisStyle := bc.XAxis.InheritFrom(defaultStyle)
+
+		axisStyle.WriteToRenderer(r)
+
+		width, spacing, _ := bc.calculateScaledTotalSize(canvasBox)
+
+		cursor := canvasBox.Bottom - len(bc.Bars)*(width+spacing)
+
+		r.MoveTo(canvasBox.Left, cursor)
+		r.LineTo(canvasBox.Left, canvasBox.Bottom)
+		r.Stroke()
+
+		for index, bar := range bc.Bars {
+			tb := r.MeasureText(bar.Label)
+
+			barLabelBox := render.Box{
+				Top:    cursor + spacing,
+				Left:   canvasBox.Left - tb.Width() - (2 * defaultYAxisMargin),
+				Right:  canvasBox.Left - defaultYAxisMargin,
+				Bottom: cursor + width,
+			}
+
+			if len(bar.Label) > 0 {
+				render.Text.DrawWithin(r, bar.Label, barLabelBox, axisStyle)
+			}
+
+			axisStyle.WriteToRenderer(r)
+			if index < len(bc.Bars) {
+				r.MoveTo(canvasBox.Left, cursor)
+				r.LineTo(canvasBox.Left-defaultHorizontalTickWidth, cursor)
+				r.Stroke()
+			}
+			cursor += width + spacing
+		}
 	}
 }
 
@@ -352,7 +492,11 @@ func (bc *BarChart) hasAxes() bool {
 }
 
 func (bc *BarChart) setRangeDomains(canvasBox render.Box, yr sequence.Range) sequence.Range {
-	yr.SetDomain(canvasBox.Height())
+	if bc.IsHorizontal {
+		yr.SetDomain(canvasBox.Width())
+	} else {
+		yr.SetDomain(canvasBox.Height())
+	}
 	return yr
 }
 
@@ -375,9 +519,14 @@ func (bc *BarChart) getAxesTicks(r render.Renderer, yr sequence.Range, yf datase
 }
 
 func (bc *BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
-	totalWithBaseSpacing := bc.calculateTotalBarWidth(bc.GetBarWidth(), bc.GetBarSpacing())
-	if totalWithBaseSpacing > canvasBox.Width() {
-		lessBarWidths := canvasBox.Width() - (len(bc.Bars) * bc.GetBarWidth()) - defaultHorizontalTickWidth
+	canvasLength := canvasBox.Width()
+	if bc.IsHorizontal {
+		canvasLength = canvasBox.Height()
+	}
+
+	totalWithBaseSpacing := bc.calculateTotalBarSize(bc.GetBarWidth(), bc.GetBarSpacing())
+	if totalWithBaseSpacing > canvasLength {
+		lessBarWidths := canvasLength - (len(bc.Bars) * bc.GetBarWidth()) - defaultHorizontalTickWidth
 		if lessBarWidths > 0 {
 			return int(math.Ceil(float64(lessBarWidths) / float64(len(bc.Bars))))
 		}
@@ -386,10 +535,15 @@ func (bc *BarChart) calculateEffectiveBarSpacing(canvasBox render.Box) int {
 	return bc.GetBarSpacing()
 }
 
-func (bc *BarChart) calculateEffectiveBarWidth(canvasBox render.Box, spacing int) int {
-	totalWithBaseWidth := bc.calculateTotalBarWidth(bc.GetBarWidth(), spacing)
-	if totalWithBaseWidth > canvasBox.Width() {
-		totalLessBarSpacings := canvasBox.Width() - (len(bc.Bars) * spacing) - defaultHorizontalTickWidth
+func (bc *BarChart) calculateEffectiveBarSize(canvasBox render.Box, spacing int) int {
+	canvasLength := canvasBox.Width()
+	if bc.IsHorizontal {
+		canvasLength = canvasBox.Height()
+	}
+
+	totalWithBaseWidth := bc.calculateTotalBarSize(bc.GetBarWidth(), spacing)
+	if totalWithBaseWidth > canvasLength {
+		totalLessBarSpacings := canvasLength - (len(bc.Bars) * spacing) - defaultHorizontalTickWidth
 		if totalLessBarSpacings > 0 {
 			return int(math.Ceil(float64(totalLessBarSpacings) / float64(len(bc.Bars))))
 		}
@@ -398,21 +552,21 @@ func (bc *BarChart) calculateEffectiveBarWidth(canvasBox render.Box, spacing int
 	return bc.GetBarWidth()
 }
 
-func (bc *BarChart) calculateTotalBarWidth(barWidth, spacing int) int {
+func (bc *BarChart) calculateTotalBarSize(barWidth, spacing int) int {
 	return len(bc.Bars) * (barWidth + spacing)
 }
 
-func (bc *BarChart) calculateScaledTotalWidth(canvasBox render.Box) (width, spacing, total int) {
+func (bc *BarChart) calculateScaledTotalSize(canvasBox render.Box) (size, spacing, total int) {
 	spacing = bc.calculateEffectiveBarSpacing(canvasBox)
-	width = bc.calculateEffectiveBarWidth(canvasBox, spacing)
-	total = bc.calculateTotalBarWidth(width, spacing)
+	size = bc.calculateEffectiveBarSize(canvasBox, spacing)
+	total = bc.calculateTotalBarSize(size, spacing)
 	return
 }
 
 func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box, yrange sequence.Range, yticks []Tick) render.Box {
 	axesOuterBox := canvasBox.Clone()
 
-	_, _, totalWidth := bc.calculateScaledTotalWidth(canvasBox)
+	_, _, totalWidth := bc.calculateScaledTotalSize(canvasBox)
 
 	if !bc.XAxis.Hidden {
 		xaxisHeight := defaultVerticalTickHeight
@@ -448,6 +602,94 @@ func (bc *BarChart) getAdjustedCanvasBox(r render.Renderer, canvasBox render.Box
 	if !bc.YAxis.Style.Hidden {
 		axesBounds := bc.YAxis.Measure(r, canvasBox, yrange, bc.styleDefaultsAxes(), yticks)
 		axesOuterBox = axesOuterBox.Grow(axesBounds)
+	}
+
+	return canvasBox.OuterConstrain(bc.box(), axesOuterBox)
+}
+
+func (bc *BarChart) getAdjustedHorizontalCanvasBox(r render.Renderer, canvasBox render.Box, yrange sequence.Range, yticks []Tick) render.Box {
+	axesOuterBox := canvasBox.Clone()
+	size, spacing, totalHeight := bc.calculateScaledTotalSize(canvasBox)
+
+	if len(bc.Title) > 0 && !bc.TitleStyle.Hidden {
+		r.SetFont(bc.TitleStyle.GetFont(bc.GetFont()))
+		r.SetFontColor(bc.TitleStyle.GetFontColor(bc.GetColorPalette().TextColor()))
+		titleFontSize := bc.TitleStyle.GetFontSize(bc.getTitleFontSize())
+		r.SetFontSize(titleFontSize)
+
+		textBox := r.MeasureText(bc.Title)
+
+		tbox := render.Box{
+			Top:    canvasBox.Top - textBox.Height() - bc.TitleStyle.Padding.Height(),
+			Left:   canvasBox.Left,
+			Right:  canvasBox.Right,
+			Bottom: canvasBox.Top,
+		}
+
+		axesOuterBox = axesOuterBox.Grow(tbox)
+
+		r.ResetStyle()
+	}
+
+	if !bc.YAxis.Style.Hidden {
+		yAxisWidth := defaultHorizontalTickWidth
+		axisStyle := bc.YAxis.Style.InheritFrom(bc.styleDefaultsAxes())
+		axisStyle.WriteToRenderer(r)
+
+		cursor := canvasBox.Bottom - len(bc.Bars)*(size+spacing)
+		for _, bar := range bc.Bars {
+			if len(bar.Label) > 0 {
+				barLabelBox := render.Box{
+					Top:    cursor,
+					Left:   0,
+					Right:  canvasBox.Left + defaultYAxisMargin,
+					Bottom: cursor,
+				}
+
+				lines := render.Text.WrapFit(r, bar.Label, barLabelBox.Width(), axisStyle)
+				linesBox := render.Text.MeasureLines(r, lines, axisStyle)
+
+				yAxisWidth = mathutil.MaxInt(linesBox.Width()+(2*defaultYAxisMargin), yAxisWidth)
+			}
+
+			cursor += size + spacing
+		}
+
+		ybox := render.Box{
+			Top:    canvasBox.Top,
+			Left:   canvasBox.Left - yAxisWidth,
+			Right:  canvasBox.Right,
+			Bottom: canvasBox.Top + totalHeight,
+		}
+
+		axesOuterBox = axesOuterBox.Grow(ybox)
+	}
+
+	if !bc.XAxis.Hidden {
+		var ltx, rtx int
+		var tx int
+		var left, right, bottom = math.MaxInt32, 0, 0
+		for _, t := range yticks {
+			v := t.Value
+
+			tx = canvasBox.Left + yrange.Translate(v)
+			tb := render.Text.Measure(r, t.Label, bc.XAxis.GetTextOptions())
+			ltx = tx - tb.Width()>>1
+			rtx = tx + tb.Width()>>1
+			bottom = mathutil.MaxInt(bottom, tb.Height())
+
+			left = mathutil.MinInt(left, ltx)
+			right = mathutil.MaxInt(right, rtx)
+		}
+
+		xbox := render.Box{
+			Top:    canvasBox.Bottom,
+			Left:   left,
+			Right:  right,
+			Bottom: canvasBox.Bottom + defaultXAxisMargin + bottom,
+		}
+
+		axesOuterBox = axesOuterBox.Grow(xbox)
 	}
 
 	return canvasBox.OuterConstrain(bc.box(), axesOuterBox)
