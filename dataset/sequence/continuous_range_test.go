@@ -21,3 +21,14 @@ func TestRangeTranslate(t *testing.T) {
 	require.Equal(t, 1000, r.Translate(8.0))
 	require.Equal(t, 572, r.Translate(5.0))
 }
+
+func TestRangeTranslateEqaulMinMax(t *testing.T) {
+	r := ContinuousRange{
+		Domain: 370,
+		Min:    0,
+		Max:    0,
+	}
+
+	result := r.Translate(0)
+	require.Equal(t, 0, result)
+}
