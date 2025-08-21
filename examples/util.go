@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/disintegration/imaging"
-	"github.com/unidoc/unipdf/v3/model"
-	"github.com/unidoc/unipdf/v3/render"
+	"github.com/unidoc/unipdf/v4/model"
+	"github.com/unidoc/unipdf/v4/render"
 )
 
 func RenderPDFToImage(filename string) {
