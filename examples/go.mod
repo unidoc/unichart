@@ -4,8 +4,8 @@ go 1.23.0
 
 require (
 	github.com/disintegration/imaging v1.6.2
-	github.com/unidoc/unichart v0.4.0
-	github.com/unidoc/unipdf/v3 v3.69.0
+	github.com/unidoc/unichart v0.5.0
+	github.com/unidoc/unipdf/v4 v4.2.0
 )
 
 require (
@@ -15,11 +15,11 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/gorilla/i18n v0.0.0-20150820051429-8b358169da46 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/unidoc/freetype v0.2.3 // indirect
+	github.com/unidoc/garabic v0.0.0-20220702200334-8c7cb25baa11 // indirect
 	github.com/unidoc/pkcs7 v0.2.0 // indirect
 	github.com/unidoc/timestamp v0.0.0-20200412005513-91597fd3793a // indirect
 	github.com/unidoc/unitype v0.5.1 // indirect
