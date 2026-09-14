@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build Go ${{ matrix.go }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ["1.27.0", "1.26.0", "1.25.0"]
+    env:
+      CGO_ENABLED: 0
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Setup go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go }}
+        cache-dependency-path: |
+          go.sum
+          examples/go.sum
+
+    - name: go vet
+      run: go vet ./...
+
+    - name: Test
+      run: go test -count=1 ./...
+
+    - name: Build examples
+      run: |
+        cd examples
+        go vet ./...
+        for dir in */; do
+          if [ -f "$dir/main.go" ]; then
+            go build -o /dev/null "./$dir"
+          fi
+        done
