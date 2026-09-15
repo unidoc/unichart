@@ -8,8 +8,8 @@ import (
 	"github.com/unidoc/unichart"
 	"github.com/unidoc/unichart/dataset"
 	"github.com/unidoc/unichart/examples"
-	"github.com/unidoc/unipdf/v4/common/license"
-	"github.com/unidoc/unipdf/v4/creator"
+	"github.com/unidoc/unipdf/v5/common/license"
+	"github.com/unidoc/unipdf/v5/creator"
 )
 
 func init() {
